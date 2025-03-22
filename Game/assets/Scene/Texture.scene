@@ -2,18 +2,26 @@ Scene: 3861974021
 Entities:
   - Entity:
       TagComponent:
-        Tag: Camera
+        Tag: red
       TransformComponent:
-        Translate: [0, 0, 0]
-        Rotation: [0, 0, 0]
+        Translate: [-4.59033585, 0, 0]
+        Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      CameraComponent:
-        Camera:
-          OrthographicSize: 10
-          AspectRatio: 2.23737383
-          OrthographicNearAndFar: [-1, 1]
-        Primary: true
-        FixedAspectRatio: false
+      RenderQuadComponent:
+        Color: [1, 0.999989986, 0.999989986, 1]
+        Texture: assets\Texture\1.jpg
+  - Entity:
+      TagComponent:
+        Tag: green
+      TransformComponent:
+        Translate: [-0.663892627, 0, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      RenderCircleComponent:
+        Color: [1, 1, 1, 1]
+        Texture: assets\Texture\2.jpg
+        Thickness: 1
+        Fade: 0.00499999989
   - Entity:
       TagComponent:
         Tag: blue
@@ -26,21 +34,15 @@ Entities:
         Texture: assets\Texture\j.jpg
   - Entity:
       TagComponent:
-        Tag: green
+        Tag: Camera
       TransformComponent:
-        Translate: [-0.663892627, 0, 0]
-        Rotation: [0, -0, 0]
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
         Scale: [1, 1, 1]
-      RenderQuadComponent:
-        Color: [0.999991834, 1, 0.999989986, 1]
-        Texture: assets\Texture\2.jpg
-  - Entity:
-      TagComponent:
-        Tag: red
-      TransformComponent:
-        Translate: [-4.59033585, 0, 0]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      RenderQuadComponent:
-        Color: [1, 0.999989986, 0.999989986, 1]
-        Texture: assets\Texture\1.jpg
+      CameraComponent:
+        Camera:
+          OrthographicSize: 10
+          AspectRatio: 1.68531466
+          OrthographicNearAndFar: [-1, 1]
+        Primary: true
+        FixedAspectRatio: false

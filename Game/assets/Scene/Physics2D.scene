@@ -2,37 +2,21 @@ Scene: 3861974021
 Entities:
   - Entity:
       TagComponent:
-        Tag: wall
+        Tag: quad
       TransformComponent:
-        Translate: [0.0944833681, -1.67829132, 0]
-        Rotation: [0, -0, -0.179951504]
-        Scale: [9.61776829, 1, 1]
+        Translate: [3.24381304, -2.50156546, -0.000122070662]
+        Rotation: [0, -0, -0.196025491]
+        Scale: [0.999999881, 0.999999881, 1]
       RenderQuadComponent:
-        Color: [0.970588207, 0, 0, 1]
-        Texture: ""
-      Rigidbody2DComponent:
-        Type: 0
-        FixedRotation: false
-        Density: 1
-        Friction: 0.5
-        Restitution: 0
-        RestitutionThreshold: 1
-  - Entity:
-      TagComponent:
-        Tag: ball
-      TransformComponent:
-        Translate: [0.094483003, 2.69599128, 0]
-        Rotation: [0, -0, 0]
-        Scale: [1, 1, 1]
-      RenderQuadComponent:
-        Color: [1, 1, 1, 1]
+        Color: [0, 0.320069164, 0.725490212, 1]
         Texture: ""
       Rigidbody2DComponent:
         Type: 1
         FixedRotation: false
+        Size: [0.5, 0.5]
         Density: 1
-        Friction: 0.5
-        Restitution: 0.349999994
+        Friction: 1
+        Restitution: 0
         RestitutionThreshold: 1
   - Entity:
       TagComponent:
@@ -44,7 +28,45 @@ Entities:
       CameraComponent:
         Camera:
           OrthographicSize: 10
-          AspectRatio: 1.70163167
+          AspectRatio: 1.68531466
           OrthographicNearAndFar: [-1, 1]
         Primary: true
         FixedAspectRatio: false
+  - Entity:
+      TagComponent:
+        Tag: ball
+      TransformComponent:
+        Translate: [-0.106377259, 3.58177924, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      RenderCircleComponent:
+        Color: [1, 1, 1, 1]
+        Texture: assets\Texture\1.jpg
+        Thickness: 1
+        Fade: 0.00499999989
+      Rigidbody2DComponent:
+        Type: 1
+        FixedRotation: false
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0.349999994
+        RestitutionThreshold: 1
+  - Entity:
+      TagComponent:
+        Tag: wall
+      TransformComponent:
+        Translate: [-0.753593445, -2.81719208, 0]
+        Rotation: [0, -0, -0.179951504]
+        Scale: [9.61776829, 1, 1]
+      RenderQuadComponent:
+        Color: [0.970588207, 0, 0, 1]
+        Texture: ""
+      Rigidbody2DComponent:
+        Type: 0
+        FixedRotation: false
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 1

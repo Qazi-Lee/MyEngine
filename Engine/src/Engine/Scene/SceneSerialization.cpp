@@ -10,6 +10,12 @@
 namespace YAML
 {
 	//重载运算符
+	static Emitter& operator<<(Emitter& out, const glm::vec2& vec)
+	{
+		out << Flow;
+		out << BeginSeq << vec.x << vec.y<< EndSeq;
+		return out;
+	}
 	static Emitter& operator<<( Emitter&out,const glm::vec3&vec)
 	{
 		out << Flow;
@@ -23,6 +29,28 @@ namespace YAML
 		return out;
 	}
 	//增加convert模板
+	template<>
+	struct convert<glm::vec2>
+	{
+		//序列化
+		static Node encode(const glm::vec2& vec)
+		{
+			Node node;
+			node.push_back(vec.x);
+			node.push_back(vec.y);
+			return node;
+		}
+		//反序列化
+		static bool decode(const Node& node, glm::vec2& vec)
+		{
+			//将数组转换为vec3
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+			vec.x = node[0].as<float>();
+			vec.y = node[1].as<float>();
+			return true;
+		}
+	};
 	template<>
 	struct convert<glm::vec3>
 	{
@@ -139,6 +167,23 @@ namespace ENGINE
 			out << YAML::Key << "Texture" << YAML::Value << path;
 			out << YAML::EndMap;
 		}
+		if (entity.HasComponent<RenderCircleComponent>())
+		{
+			out << YAML::Key << "RenderCircleComponent" << YAML::BeginMap;
+			auto color = entity.GetComponent<RenderCircleComponent>().color;
+			out << YAML::Key << "Color" << YAML::Value << color;
+			auto& texture = entity.GetComponent<RenderCircleComponent>().Texture;
+			auto& thickness= entity.GetComponent<RenderCircleComponent>().thickness;
+			auto& fade = entity.GetComponent<RenderCircleComponent>().fade;
+			std::string path = std::string();
+			if (texture.get())
+				path = texture->GetPath();
+			out << YAML::Key << "Texture" << YAML::Value << path;
+			out << YAML::Key << "Thickness" << YAML::Value << thickness;
+			out << YAML::Key << "Fade" << YAML::Value << fade;
+			out << YAML::EndMap;
+
+		}
 		//相机组件
 		if (entity.HasComponent<CameraComponent>())
 		{
@@ -164,6 +209,7 @@ namespace ENGINE
 			auto& rg2d = entity.GetComponent<Rigidbody2DComponent>();
 			out << YAML::Key << "Type" << YAML::Value << (int)rg2d.Type;
 			out << YAML::Key << "FixedRotation" << YAML::Value << rg2d.FixedRotation;
+			out << YAML::Key << "Size" << YAML::Value << rg2d.size;
 			out << YAML::Key << "Density" << YAML::Value << rg2d.Density;
 			out << YAML::Key << "Friction" << YAML::Value << rg2d.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << rg2d.Restitution;
@@ -243,18 +289,33 @@ namespace ENGINE
 					transform.Rotation= transformComponent["Rotation"].as<glm::vec3>();
 					transform.Scale = transformComponent["Scale"].as<glm::vec3>();
 				}
-				//RenderColorComponent
-				auto rendercolorComponennt = entity["RenderQuadComponent"];
-				if (rendercolorComponennt)
+				//RenderQuadComponent
+				auto renderquadComponennt = entity["RenderQuadComponent"];
+				if (renderquadComponennt)
 				{
-					auto color = rendercolorComponennt["Color"].as<glm::vec4>();
+					auto color = renderquadComponennt["Color"].as<glm::vec4>();
 					auto &EntityRC=DeserializationEntity.AddComponent<RenderQuadComponent>(color);
-					auto path = rendercolorComponennt["Texture"].as<std::string>();
+					auto path = renderquadComponennt["Texture"].as<std::string>();
 					if (!path.empty())
 					{
 						Ref<Texture2D>texture = Texture2D::Create(path);
 						EntityRC.Texture = texture;
 					}
+				}
+				//RenderCircleComponent
+				auto rendercircleComponennt = entity["RenderCircleComponent"];
+				if (rendercircleComponennt)
+				{
+					auto color = rendercircleComponennt["Color"].as<glm::vec4>();
+					auto& EntityRC = DeserializationEntity.AddComponent<RenderCircleComponent>(color);
+					auto path = rendercircleComponennt["Texture"].as<std::string>();
+					if (!path.empty())
+					{
+						Ref<Texture2D>texture = Texture2D::Create(path);
+						EntityRC.Texture = texture;
+					}
+					EntityRC.thickness = rendercircleComponennt["Thickness"].as<float>();
+					EntityRC.fade = rendercircleComponennt["Fade"].as<float>();
 				}
 				//CameraComponent
 				auto cameraComponent = entity["CameraComponent"];
@@ -282,6 +343,7 @@ namespace ENGINE
 					auto& bc = DeserializationEntity.AddComponent<Rigidbody2DComponent>();
 					bc.Type = (Rigidbody2DComponent::BodyType)bodyComponent["Type"].as<int>();
 					bc.FixedRotation = bodyComponent["FixedRotation"].as<bool>();
+					bc.size = bodyComponent["Size"].as<glm::vec2>();
 					bc.Density = bodyComponent["Density"].as<float>();
 					bc.Friction = bodyComponent["Friction"].as<float>();
 					bc.Restitution= bodyComponent["Restitution"].as<float>();

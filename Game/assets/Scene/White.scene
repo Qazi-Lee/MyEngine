@@ -2,6 +2,18 @@ Scene: 3861974021
 Entities:
   - Entity:
       TagComponent:
+        Tag: ball
+      TransformComponent:
+        Translate: [-2.29999995, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RenderCircleComponent:
+        Color: [1, 1, 1, 1]
+        Texture: ""
+        Thickness: 1
+        Fade: 0.00499999989
+  - Entity:
+      TagComponent:
         Tag: White
       TransformComponent:
         Translate: [0, 0, 0]

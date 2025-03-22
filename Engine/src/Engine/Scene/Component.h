@@ -102,6 +102,8 @@ namespace ENGINE
 		//获取2d实体
 		void* RuntimeBody = nullptr;
 
+		//boxsize
+		glm::vec2 size = { 0.5f,0.5f };
 		//密度
 		float Density = 1.0f;
 		//摩擦

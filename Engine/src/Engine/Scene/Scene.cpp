@@ -262,10 +262,35 @@ namespace ENGINE
 
 				b2Body* body = m_b2World->CreateBody(&bodydef);
 
-
 				rgd2d.RuntimeBody = body;
+
 				b2PolygonShape bodyshape;
-				bodyshape.SetAsBox(trans.Scale.x * 0.5, trans.Scale.y * 0.5);
+				if (m_Registry.has<RenderQuadComponent>(entity))
+				{
+					bodyshape.SetAsBox(trans.Scale.x * rgd2d.size.x, trans.Scale.y * rgd2d.size.y);
+				}
+				else if (m_Registry.has<RenderCircleComponent>(entity))
+				{
+
+					//近似模拟圆形，只支持最大8边形
+					float a = trans.Scale.x * rgd2d.size.x; // X 半径
+					float b = trans.Scale.y * rgd2d.size.y; // Y 半径
+					const int numSegments = 24;
+					//若需更多顶点，需修改 b2Settings.h 中的 b2_maxPolygonVertices（不推荐破坏兼容性）。已更改为24
+					// 生成顶点
+					b2Vec2 vertices[numSegments];
+					vertices->SetZero();
+					for (int i = 0; i < numSegments; ++i) {
+						float theta = 2.0f * b2_pi * i / numSegments;
+						vertices[i].Set(a * cosf(theta), b * sinf(theta));
+					}
+					bodyshape.Set(vertices, numSegments);
+				}
+				else
+				{
+					//暂时设置
+					bodyshape.SetAsBox(trans.Scale.x * rgd2d.size.x, trans.Scale.y * rgd2d.size.y);
+				}
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &bodyshape;
 				fixtureDef.density = rgd2d.Density;
@@ -275,7 +300,6 @@ namespace ENGINE
 				body->CreateFixture(&fixtureDef);
 
 			}
-
 		}
 	}
 

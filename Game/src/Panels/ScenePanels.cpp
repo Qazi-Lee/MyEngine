@@ -309,6 +309,9 @@ namespace ENGINE
 				}
 				ImGui::EndCombo();
 			}
+			//控制尺寸
+			ImGui::DragFloat("SizeX", &rgd2d.size.x, 0.01f, 0.0f, 0.5f);
+			ImGui::DragFloat("SizeY", &rgd2d.size.y, 0.01f, 0.0f, 0.5f);
 			//旋转禁用
 			ImGui::Checkbox("Fixed Rotation", &rgd2d.FixedRotation);
 
@@ -350,19 +353,18 @@ namespace ENGINE
 					entity.AddComponent<TransformComponent>();
 				}
 			}
-			if (!entity.HasComponent<RenderQuadComponent>())
+			if (!entity.HasComponent<RenderQuadComponent>()&& !entity.HasComponent<RenderCircleComponent>())
 			{
+
 				if (ImGui::MenuItem("RenderQuadComponent"))
 				{
 					entity.AddComponent<RenderQuadComponent>();
 				}
-			}
-			if (!entity.HasComponent<RenderCircleComponent>())
-			{
 				if (ImGui::MenuItem("RenderCircleComponent"))
 				{
 					entity.AddComponent<RenderCircleComponent>();
 				}
+
 			}
 			if (!entity.HasComponent<CameraComponent>())
 			{

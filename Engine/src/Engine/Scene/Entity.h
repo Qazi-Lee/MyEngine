@@ -48,7 +48,7 @@ namespace ENGINE
 		}
 
 
-		operator bool()const { return m_Scene!=nullptr&&m_Scene->m_Registry.valid(m_Entity); }
+		operator bool()const { return m_Scene!=nullptr&&m_Entity!=entt::null&&m_Scene->m_Registry.valid(m_Entity); }
 		operator entt::entity()const { return m_Entity; }
 		operator uint32_t()const { return (uint32_t)m_Entity; }
 

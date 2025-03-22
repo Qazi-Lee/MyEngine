@@ -2,13 +2,13 @@ Scene: 3861974021
 Entities:
   - Entity:
       TagComponent:
-        Tag: blue
+        Tag: red
       TransformComponent:
-        Translate: [3.50911736, 0, 0]
+        Translate: [-4.59033585, 0, 0]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
       RenderQuadComponent:
-        Color: [0, 0.404681504, 0.985294104, 1]
+        Color: [1, 0, 0, 1]
         Texture: ""
   - Entity:
       TagComponent:
@@ -17,16 +17,18 @@ Entities:
         Translate: [-0.663892627, 0, 0]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      RenderQuadComponent:
-        Color: [0.178572178, 1, 0, 1]
+      RenderCircleComponent:
+        Color: [0.107959114, 0.906862736, 0, 1]
         Texture: ""
+        Thickness: 0.388000011
+        Fade: 0.0989999995
   - Entity:
       TagComponent:
-        Tag: red
+        Tag: blue
       TransformComponent:
-        Translate: [-4.59033585, 0, 0]
+        Translate: [3.50911736, 0, 0]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
       RenderQuadComponent:
-        Color: [1, 0, 0, 1]
+        Color: [0, 0.404681504, 0.985294104, 1]
         Texture: ""
