@@ -21,7 +21,7 @@ Entities:
         Translate: [3.50911736, 0, 0]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      RenderColorComponent:
+      RenderQuadComponent:
         Color: [0.999989986, 0.999994099, 1, 1]
         Texture: assets\Texture\j.jpg
   - Entity:
@@ -31,7 +31,7 @@ Entities:
         Translate: [-0.663892627, 0, 0]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      RenderColorComponent:
+      RenderQuadComponent:
         Color: [0.999991834, 1, 0.999989986, 1]
         Texture: assets\Texture\2.jpg
   - Entity:
@@ -41,6 +41,6 @@ Entities:
         Translate: [-4.59033585, 0, 0]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      RenderColorComponent:
+      RenderQuadComponent:
         Color: [1, 0.999989986, 0.999989986, 1]
         Texture: assets\Texture\1.jpg

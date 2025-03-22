@@ -108,17 +108,36 @@ namespace ENGINE
 				if (m_Camera)
 				{
 					Render2D::BeginScene(*m_Camera, trans);
-					auto view = m_Registry.view<TransformComponent, RenderColorComponent>();
-					for (auto entity : view)
+					//矩形
 					{
-						auto [transform, rc] = view.get<TransformComponent, RenderColorComponent>(entity);
-						if (rc.Texture.get())
+						auto view = m_Registry.view<TransformComponent, RenderQuadComponent>();
+						for (auto entity : view)
 						{
-							Render2D::DrawQuad(transform.GetTransform(), rc.color, rc.Texture, (int)entity);
+							auto [transform, rc] = view.get<TransformComponent, RenderQuadComponent>(entity);
+							if (rc.Texture.get())
+							{
+								Render2D::DrawQuad(transform.GetTransform(), rc.color, rc.Texture, (int)entity);
+							}
+							else
+							{
+								Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
+							}
 						}
-						else
+					}
+					//圆形
+					{
+						auto view = m_Registry.view<TransformComponent, RenderCircleComponent>();
+						for (auto entity : view)
 						{
-							Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
+							auto [transform, rc] = view.get<TransformComponent, RenderCircleComponent>(entity);
+							if (rc.Texture.get())
+							{
+								Render2D::DrawCircle(transform.GetTransform(), rc.color,rc.Texture, rc.thickness, rc.fade, (int)entity);
+							}
+							else
+							{
+								Render2D::DrawCircle(transform.GetTransform(), rc.color, rc.thickness, rc.fade, (int)entity);
+							}
 						}
 					}
 					Render2D::EndScene();
@@ -131,19 +150,37 @@ namespace ENGINE
 
 		if(!m_Registry.empty())
 		{
-			auto view = m_Registry.view<TransformComponent, RenderColorComponent>();
 			Render2D::BeginScene(camera);
-			for (auto entity : view)
+			//矩形
 			{
-				auto [transform, rc] = view.get<TransformComponent, RenderColorComponent>(entity);
-				if (rc.Texture.get())
+				auto view = m_Registry.view<TransformComponent, RenderQuadComponent>();
+				for (auto entity : view)
 				{
-					Render2D::DrawQuad(transform.GetTransform(), rc.color, rc.Texture, (int)entity);
+					auto [transform, rc] = view.get<TransformComponent, RenderQuadComponent>(entity);
+					if (rc.Texture.get())
+					{
+						Render2D::DrawQuad(transform.GetTransform(), rc.color, rc.Texture, (int)entity);
+					}
+					else
+					{
+							Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
+					}
 				}
-				else
+			}
+			//圆形
+			{
+				auto view = m_Registry.view<TransformComponent, RenderCircleComponent>();
+				for (auto entity : view)
 				{
-				//	Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
-					Render2D::DrawCircle(transform.GetTransform(), rc.color, 1.0,0.005,( int)entity);
+					auto [transform, rc] = view.get<TransformComponent, RenderCircleComponent>(entity);
+					if (rc.Texture.get())
+					{
+						Render2D::DrawCircle(transform.GetTransform(), rc.color, rc.Texture, rc.thickness, rc.fade, (int)entity);
+					}
+					else
+					{
+						Render2D::DrawCircle(transform.GetTransform(), rc.color, rc.thickness, rc.fade, (int)entity);
+					}
 				}
 			}
 			Render2D::EndScene();
@@ -190,7 +227,8 @@ namespace ENGINE
 				auto tarid = target.create();
 				CopyComponent<TagComponent>(SrcRegistry, target,srcid,tarid);
 				CopyComponent<TransformComponent>(SrcRegistry, target, srcid, tarid);
-				CopyComponent<RenderColorComponent>(SrcRegistry, target, srcid, tarid);
+				CopyComponent<RenderQuadComponent>(SrcRegistry, target, srcid, tarid);
+				CopyComponent<RenderCircleComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<CameraComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<ScriptComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<NativeScriptComponent>(SrcRegistry, target, srcid, tarid);
@@ -282,7 +320,7 @@ namespace ENGINE
 		component.Primary = true;
 	}
 	template<>
-	void Scene::OnComponentAdded<RenderColorComponent>(RenderColorComponent& component)
+	void Scene::OnComponentAdded<RenderQuadComponent>(RenderQuadComponent& component)
 	{
 
 	}
@@ -293,6 +331,10 @@ namespace ENGINE
 	}
 	template<>
 	void Scene::OnComponentAdded<Rigidbody2DComponent>(Rigidbody2DComponent& component)
+	{
+	}
+	template<>
+	void Scene::OnComponentAdded<RenderCircleComponent>(RenderCircleComponent& component)
 	{
 	}
 }

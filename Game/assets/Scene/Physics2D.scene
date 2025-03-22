@@ -7,7 +7,7 @@ Entities:
         Translate: [0.0944833681, -1.67829132, 0]
         Rotation: [0, -0, -0.179951504]
         Scale: [9.61776829, 1, 1]
-      RenderColorComponent:
+      RenderQuadComponent:
         Color: [0.970588207, 0, 0, 1]
         Texture: ""
       Rigidbody2DComponent:
@@ -24,7 +24,7 @@ Entities:
         Translate: [0.094483003, 2.69599128, 0]
         Rotation: [0, -0, 0]
         Scale: [1, 1, 1]
-      RenderColorComponent:
+      RenderQuadComponent:
         Color: [1, 1, 1, 1]
         Texture: ""
       Rigidbody2DComponent:

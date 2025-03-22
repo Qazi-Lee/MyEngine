@@ -127,12 +127,12 @@ namespace ENGINE
 			out << YAML::EndMap;
 		}
 		//渲染组件
-		if (entity.HasComponent<RenderColorComponent>())
+		if (entity.HasComponent<RenderQuadComponent>())
 		{
-			out << YAML::Key << "RenderColorComponent" << YAML::BeginMap;
-			auto color = entity.GetComponent<RenderColorComponent>().color;
+			out << YAML::Key << "RenderQuadComponent" << YAML::BeginMap;
+			auto color = entity.GetComponent<RenderQuadComponent>().color;
 			out << YAML::Key << "Color" << YAML::Value << color;
-			auto& texture = entity.GetComponent<RenderColorComponent>().Texture;
+			auto& texture = entity.GetComponent<RenderQuadComponent>().Texture;
 			std::string path = std::string();
 			if (texture.get())
 				path = texture->GetPath();
@@ -244,11 +244,11 @@ namespace ENGINE
 					transform.Scale = transformComponent["Scale"].as<glm::vec3>();
 				}
 				//RenderColorComponent
-				auto rendercolorComponennt = entity["RenderColorComponent"];
+				auto rendercolorComponennt = entity["RenderQuadComponent"];
 				if (rendercolorComponennt)
 				{
 					auto color = rendercolorComponennt["Color"].as<glm::vec4>();
-					auto &EntityRC=DeserializationEntity.AddComponent<RenderColorComponent>(color);
+					auto &EntityRC=DeserializationEntity.AddComponent<RenderQuadComponent>(color);
 					auto path = rendercolorComponennt["Texture"].as<std::string>();
 					if (!path.empty())
 					{

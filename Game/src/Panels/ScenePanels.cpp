@@ -173,21 +173,21 @@ namespace ENGINE
 			}
 		}
 
-		if (entity.HasComponent<RenderColorComponent>())
+		if (entity.HasComponent<RenderQuadComponent>())
 		{
-			bool open = ImGui::TreeNodeEx((void*)typeid(RenderColorComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Color");
+			bool open = ImGui::TreeNodeEx((void*)typeid(RenderQuadComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Quad");
 			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
 			if (ImGui::Button("+"))
 			{
-				ImGui::OpenPopup("RenderColor");
+				ImGui::OpenPopup("RenderQuad");
 			}
 			if (open)
 			{
-				auto& color = entity.GetComponent<RenderColorComponent>().color;
-				ImGui::ColorEdit4("color", glm::value_ptr(color));
+				auto& color = entity.GetComponent<RenderQuadComponent>().color;
+				ImGui::ColorEdit4("Color", glm::value_ptr(color));
 				float width = ImGui::GetWindowSize().x / 3;
 				float height = ImGui::GetWindowSize().y / 4;
-				auto& texture = entity.GetComponent<RenderColorComponent>().Texture;
+				auto& texture = entity.GetComponent<RenderQuadComponent>().Texture;
 				Ref<Texture2D>blackTex = Texture2D::Create(1,1);
 				uint32_t black = 0x00000000;
 				blackTex->SetData(&black, sizeof(uint32_t));
@@ -213,11 +213,68 @@ namespace ENGINE
 					ImGui::EndDragDropTarget();
 				}
 				ImGui::TextWrapped("Texture");
-				if (ImGui::BeginPopup("RenderColor", ImGuiPopupFlags_NoOpenOverExistingPopup))
+				if (ImGui::BeginPopup("RenderQuad", ImGuiPopupFlags_NoOpenOverExistingPopup))
 				{
 					if (ImGui::MenuItem("Delete Component"))
 					{
-						entity.RemoveComponent<RenderColorComponent>();
+						entity.RemoveComponent<RenderQuadComponent>();
+					}
+					ImGui::EndPopup();
+				}
+				ImGui::TreePop();
+			}
+		}
+
+		if (entity.HasComponent<RenderCircleComponent>())
+		{
+			bool open = ImGui::TreeNodeEx((void*)typeid(RenderCircleComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Circle");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
+			if (ImGui::Button("+"))
+			{
+				ImGui::OpenPopup("RenderCircle");
+			}
+			if (open)
+			{
+				auto& component = entity.GetComponent<RenderCircleComponent>();
+				auto& color =component.color;
+				auto& thickness = component.thickness;
+				auto& fade = component.fade;
+				ImGui::ColorEdit4("Color", glm::value_ptr(color));
+				ImGui::SliderFloat("Thickness", &thickness, 0.0f, 1.0f);
+				ImGui::SliderFloat("Fade", &fade, 0.0f, 1.0f);
+				float width = ImGui::GetWindowSize().x / 3;
+				float height = ImGui::GetWindowSize().y / 4;
+				auto& texture = entity.GetComponent<RenderCircleComponent>().Texture;
+				Ref<Texture2D>blackTex = Texture2D::Create(1, 1);
+				uint32_t black = 0x00000000;
+				blackTex->SetData(&black, sizeof(uint32_t));
+				uint32_t textureID = texture.get() ? texture->GetID() : blackTex->GetID();
+				ImGui::Image((void*)textureID, ImVec2(width, height), { 0,1 }, { 1,0 });
+				//添加拖拽
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturepath = std::filesystem::path(path);
+						if (texturepath.extension().string() == ".jpg" || texturepath.extension().string() == ".png"
+							|| texturepath.extension().string() == ".tiff" || texturepath.extension().string() == ".jpeg"
+							|| texturepath.extension().string() == ".gif" || texturepath.extension().string() == ".bmp")
+						{
+							texture = Texture2D::Create(texturepath.string());
+						}
+						else
+						{
+							LOG_INFO("纹理格式错误！");
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::TextWrapped("Texture");
+				if (ImGui::BeginPopup("RenderCircle", ImGuiPopupFlags_NoOpenOverExistingPopup))
+				{
+					if (ImGui::MenuItem("Delete Component"))
+					{
+						entity.RemoveComponent<RenderCircleComponent>();
 					}
 					ImGui::EndPopup();
 				}
@@ -293,11 +350,18 @@ namespace ENGINE
 					entity.AddComponent<TransformComponent>();
 				}
 			}
-			if (!entity.HasComponent<RenderColorComponent>()) 
+			if (!entity.HasComponent<RenderQuadComponent>())
 			{
-				if (ImGui::MenuItem("RenerColorComponent"))
+				if (ImGui::MenuItem("RenderQuadComponent"))
 				{
-					entity.AddComponent<RenderColorComponent>();
+					entity.AddComponent<RenderQuadComponent>();
+				}
+			}
+			if (!entity.HasComponent<RenderCircleComponent>())
+			{
+				if (ImGui::MenuItem("RenderCircleComponent"))
+				{
+					entity.AddComponent<RenderCircleComponent>();
 				}
 			}
 			if (!entity.HasComponent<CameraComponent>())

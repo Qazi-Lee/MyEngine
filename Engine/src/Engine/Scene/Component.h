@@ -36,16 +36,25 @@ namespace ENGINE
 				 * glm::scale(glm::mat4(1.0f), Scale);
 		}
 	};
-	struct RenderColorComponent
+	struct RenderQuadComponent
 	{
 		glm::vec4 color=glm::vec4(1.0f);
 		Ref<Texture2D> Texture;
-		RenderColorComponent(const glm::vec4&col):color(col){}
-		RenderColorComponent() = default;
-		RenderColorComponent(const RenderColorComponent& other) = default;
+		RenderQuadComponent(const glm::vec4&col):color(col){}
+		RenderQuadComponent() = default;
+		RenderQuadComponent(const RenderQuadComponent& other) = default;
 		operator const glm::vec4& () { return color; }
 	};
 
+	struct RenderCircleComponent
+	{
+		glm::vec4 color = glm::vec4(1.0f);
+		Ref<Texture2D> Texture;
+		float thickness = 1.0f;
+		float fade = 0.005f;
+		RenderCircleComponent() = default;
+		RenderCircleComponent(const RenderCircleComponent&) = default;
+	};
 	struct CameraComponent
 	{
 		SceneCamera camera;
@@ -108,5 +117,6 @@ namespace ENGINE
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 	};
+
 
 }

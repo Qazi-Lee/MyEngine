@@ -29,6 +29,7 @@ namespace ENGINE
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& texture, const glm::vec4& color = glm::vec4(1.0f), const float& rotation = 0.0f);
 		
 		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, float thickness = 1.0f, float fade = 0.005f, int entityID = -1);
+		static void DrawCircle(const glm::mat4& transform, const glm::vec4& color, const Ref<Texture2D>& texture, float thickness = 1.0f, float fade = 0.005f, int entityID = -1);
 		struct Stats
 		{
 			int QuadCount = 0;

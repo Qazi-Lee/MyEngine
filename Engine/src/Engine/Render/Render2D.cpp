@@ -20,6 +20,8 @@ namespace ENGINE
 		glm::vec3 worldposition;
 		glm::vec3 localposition;
 		glm::vec4 color;
+		glm::vec2 texturecoord;
+		float textureindex;
 		//绘制圆环
 		float thickness;
 		//虚化
@@ -126,6 +128,8 @@ namespace ENGINE
 			{ LayoutElementType::Float3, "a_WorldPosition" },
 			{ LayoutElementType::Float3, "a_LocalPosition" },
 			{ LayoutElementType::Float4, "a_Color"         },
+			{LayoutElementType::Float2,  "a_Texture"       },
+			{LayoutElementType::Float,   "a_TextureIndex"   },
 			{ LayoutElementType::Float,  "a_Thickness"     },
 			{ LayoutElementType::Float,  "a_Fade"          },
 			{ LayoutElementType::Int,    "a_EntityID"      }
@@ -142,7 +146,8 @@ namespace ENGINE
 		}
 		m_Data.QuadShader->Bind();
 		m_Data.QuadShader->SetIntArray("u_Texture", sample, RenderData::MAXTEXTURE);
-
+		m_Data.CircleShader->Bind();
+		m_Data.CircleShader->SetIntArray("u_Texture", sample, RenderData::MAXTEXTURE);
 	}
 
 	void Render2D::Shutdown()
@@ -185,15 +190,16 @@ namespace ENGINE
 
 	void Render2D::Flush()
 	{
+		//纹理绑定对应槽
+		for (int i = 0; i < m_Data.TextureCount; i++)
+		{
+			m_Data.m_TextureSlots[i]->Bind(i);
+		}
 		//矩形
 		if (m_Data.QuadIndexCount)
 		{
 			uint32_t datasize = (uint32_t)((uint8_t*)m_Data.QuadVertexDataPtr - (uint8_t*)m_Data.QuadVertexDataBase);
 			m_Data.QuadVertexBuffer->SetData((void*)m_Data.QuadVertexDataBase, datasize);
-			for (int i = 0; i < m_Data.TextureCount; i++)
-			{
-				m_Data.m_TextureSlots[i]->Bind(i);
-			}
 			m_Data.QuadShader->Bind();
 			RenderCommand::DrawElement(m_Data.QuadVertexArray, m_Data.QuadIndexCount);
 			m_Data.m_stats.DrawCalls++;
@@ -203,13 +209,8 @@ namespace ENGINE
 		{
 			uint32_t datasize = (uint32_t)((uint8_t*)m_Data.CircleVertexDataPtr - (uint8_t*)m_Data.CircleVertexDataBase);
 			m_Data.CircleVertexBuffer->SetData((void*)m_Data.CircleVertexDataBase, datasize);
-			for (int i = 0; i < m_Data.TextureCount; i++)
-			{
-				m_Data.m_TextureSlots[i]->Bind(i);
-			}
 			m_Data.CircleShader->Bind();
 			RenderCommand::DrawElement(m_Data.CircleVertexArray, m_Data.CircleIndexCount);
-			std::cout << m_Data.CircleIndexCount << std::endl;
 			m_Data.m_stats.DrawCalls++;
 		}
 	}
@@ -391,12 +392,71 @@ namespace ENGINE
 		{
 			NextBatch();
 		}
-
+		constexpr glm::vec2 TextureCoord[4] = {
+			{ 0.0f,0.0f },
+			{ 1.0f,0.0f },
+			{ 1.0f,1.0f },
+			{ 0.0f,1.0f }
+		};
 		for (int i = 0; i < 4; i++)
 		{
 			m_Data.CircleVertexDataPtr->worldposition = transform *m_Data.QuadVertexPosition[i];
 			m_Data.CircleVertexDataPtr->localposition = m_Data.QuadVertexPosition[i] * 2.0f;
 			m_Data.CircleVertexDataPtr->color = color;
+			m_Data.CircleVertexDataPtr->texturecoord = TextureCoord[i];
+			m_Data.CircleVertexDataPtr->textureindex = textureindex;
+			m_Data.CircleVertexDataPtr->thickness = thickness;
+			m_Data.CircleVertexDataPtr->fade = fade;
+			m_Data.CircleVertexDataPtr->EntityID = entityID;
+			m_Data.CircleVertexDataPtr++;
+		}
+
+		m_Data.CircleIndexCount += 6;
+		m_Data.m_stats.QuadCount++;
+	}
+
+	void Render2D::DrawCircle(const glm::mat4& transform, const glm::vec4& color, const Ref<Texture2D>& texture, float thickness, float fade, int entityID)
+	{
+		float textureindex = 0.0f;
+
+		if (m_Data.QuadIndexCount >= RenderData::MAXINDEX)
+		{
+			NextBatch();
+		}
+		//先判断是否存储对应纹理
+		for (int i = 0; i < m_Data.TextureCount; i++)
+		{
+			if (*m_Data.m_TextureSlots[i].get() == *texture.get())
+			{
+				textureindex = (float)i;
+				break;
+			}
+		}
+		//不存在则添加到纹理数组(可能超出范围)
+		if (textureindex == 0.0f)
+		{
+			//超限绘制下一个
+			if (m_Data.TextureCount >= RenderData::MAXTEXTURE)
+			{
+				NextBatch();
+			}
+			m_Data.m_TextureSlots[m_Data.TextureCount] = texture;
+			textureindex = (float)m_Data.TextureCount;
+			m_Data.TextureCount++;
+		}
+		constexpr glm::vec2 TextureCoord[4] = {
+			{ 0.0f,0.0f },
+			{ 1.0f,0.0f },
+			{ 1.0f,1.0f },
+			{ 0.0f,1.0f }
+		};
+		for (int i = 0; i < 4; i++)
+		{
+			m_Data.CircleVertexDataPtr->worldposition = transform * m_Data.QuadVertexPosition[i];
+			m_Data.CircleVertexDataPtr->localposition = m_Data.QuadVertexPosition[i] * 2.0f;
+			m_Data.CircleVertexDataPtr->color = color;
+			m_Data.CircleVertexDataPtr->texturecoord = TextureCoord[i];
+			m_Data.CircleVertexDataPtr->textureindex = textureindex;
 			m_Data.CircleVertexDataPtr->thickness = thickness;
 			m_Data.CircleVertexDataPtr->fade = fade;
 			m_Data.CircleVertexDataPtr->EntityID = entityID;
