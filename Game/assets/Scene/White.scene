@@ -1,0 +1,12 @@
+Scene: 3861974021
+Entities:
+  - Entity:
+      TagComponent:
+        Tag: White
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RenderColorComponent:
+        Color: [1, 1, 1, 1]
+        Texture: ""

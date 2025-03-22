@@ -1,0 +1,50 @@
+Scene: 3861974021
+Entities:
+  - Entity:
+      TagComponent:
+        Tag: wall
+      TransformComponent:
+        Translate: [0.0944833681, -1.67829132, 0]
+        Rotation: [0, -0, -0.179951504]
+        Scale: [9.61776829, 1, 1]
+      RenderColorComponent:
+        Color: [0.970588207, 0, 0, 1]
+        Texture: ""
+      Rigidbody2DComponent:
+        Type: 0
+        FixedRotation: false
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 1
+  - Entity:
+      TagComponent:
+        Tag: ball
+      TransformComponent:
+        Translate: [0.094483003, 2.69599128, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      RenderColorComponent:
+        Color: [1, 1, 1, 1]
+        Texture: ""
+      Rigidbody2DComponent:
+        Type: 1
+        FixedRotation: false
+        Density: 1
+        Friction: 0.5
+        Restitution: 0.349999994
+        RestitutionThreshold: 1
+  - Entity:
+      TagComponent:
+        Tag: Camera
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      CameraComponent:
+        Camera:
+          OrthographicSize: 10
+          AspectRatio: 1.70163167
+          OrthographicNearAndFar: [-1, 1]
+        Primary: true
+        FixedAspectRatio: false

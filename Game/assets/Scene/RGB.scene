@@ -1,0 +1,32 @@
+Scene: 3861974021
+Entities:
+  - Entity:
+      TagComponent:
+        Tag: blue
+      TransformComponent:
+        Translate: [3.50911736, 0, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      RenderColorComponent:
+        Color: [0, 0.404681504, 0.985294104, 1]
+        Texture: ""
+  - Entity:
+      TagComponent:
+        Tag: green
+      TransformComponent:
+        Translate: [-0.663892627, 0, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      RenderColorComponent:
+        Color: [0.178572178, 1, 0, 1]
+        Texture: ""
+  - Entity:
+      TagComponent:
+        Tag: red
+      TransformComponent:
+        Translate: [-4.59033585, 0, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      RenderColorComponent:
+        Color: [1, 0, 0, 1]
+        Texture: ""
