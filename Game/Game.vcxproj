@@ -155,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shader\Render2D_Circle.glsl" />
+    <None Include="assets\Shader\Render2D_Line.glsl" />
     <None Include="assets\Shader\Render2D_Quad.glsl" />
   </ItemGroup>
   <ItemGroup>

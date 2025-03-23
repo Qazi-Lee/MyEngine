@@ -29,6 +29,14 @@ namespace ENGINE
 
 		int EntityID;
 	};
+
+	struct LineVertex
+	{
+		glm::vec3 position;
+		glm::vec4 color;
+
+		int EntityID;
+	};
 	struct RenderData
 	{
 		static const uint32_t MAXSIZE = 1000;
@@ -45,6 +53,10 @@ namespace ENGINE
 		Ref<VertexBuffer>CircleVertexBuffer;
 		Ref<Shader>CircleShader;
 
+		Ref<VertexArray>LineVertexArray;
+		Ref<VertexBuffer>LineVertexBuffer;
+		Ref<Shader>LineShader;
+
 		int QuadIndexCount = 0; 
 		QuadVertex* QuadVertexDataBase = nullptr;
 		QuadVertex* QuadVertexDataPtr = nullptr;
@@ -53,11 +65,16 @@ namespace ENGINE
 		CircleVertex* CircleVertexDataBase = nullptr;
 		CircleVertex* CircleVertexDataPtr = nullptr;
 
+		int LineIndexCount = 0;
+		LineVertex* LineVertexDataBase = nullptr;
+		LineVertex* LineVertexDataPtr = nullptr;
+
 		std::array<Ref<Texture2D>, MAXTEXTURE>m_TextureSlots;
 		int TextureCount = 0;
 
 		glm::vec4 QuadVertexPosition[4];
 
+		float m_LineWidth=1.0f;
 		Render2D::Stats m_stats;
 	};
 	static RenderData m_Data;
@@ -67,11 +84,14 @@ namespace ENGINE
 		//初始化矩形顶点和着色器
 		m_Data.QuadVertexArray = VertexArray::Creat();
 		m_Data.CircleVertexArray = VertexArray::Creat();
+		m_Data.LineVertexArray = VertexArray::Creat();;
 		//纹理
 		std::string filepath = "assets/Shader/Render2D_Quad.glsl";
 		m_Data.QuadShader = Shader::Create(filepath);
 		filepath = "assets/Shader/Render2D_Circle.glsl";
 		m_Data.CircleShader = Shader::Create(filepath);
+		filepath = "assets/Shader/Render2D_Line.glsl";
+		m_Data.LineShader = Shader::Create(filepath);
 		//白纹理
 		m_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whitedata = 0xffffffff;
@@ -138,6 +158,15 @@ namespace ENGINE
 		m_Data.CircleVertexArray->AddIndexBuffer(quadIB); // Use quad IB
 		m_Data.CircleVertexDataBase = new CircleVertex[m_Data.MAXVERTEX];
 		
+		//线条
+		m_Data.LineVertexBuffer = VertexBuffer::Creat(m_Data.MAXVERTEX * sizeof(LineVertex));
+		m_Data.LineVertexBuffer->SetLayout({
+			{ LayoutElementType::Float3, "a_Position" },
+			{ LayoutElementType::Float4, "a_Color"    },
+			{ LayoutElementType::Int,    "a_EntityID" }
+			});
+		m_Data.LineVertexArray->AddVertexBuffer(m_Data.LineVertexBuffer);
+		m_Data.LineVertexDataBase = new LineVertex[m_Data.MAXVERTEX];
 
 		int32_t sample[RenderData::MAXTEXTURE];
 		for (int i = 0; i < RenderData::MAXTEXTURE; i++)
@@ -170,6 +199,8 @@ namespace ENGINE
 		m_Data.QuadShader->SetMat4("u_ViewProjection", project);
 		m_Data.CircleShader->Bind();
 		m_Data.CircleShader->SetMat4("u_ViewProjection", project);
+		m_Data.LineShader->Bind();
+		m_Data.LineShader->SetMat4("u_ViewProjection", project);
 		StartBatch();
 	}
 
@@ -180,6 +211,8 @@ namespace ENGINE
 		m_Data.QuadShader->SetMat4("u_ViewProjection", project);
 		m_Data.CircleShader->Bind();
 		m_Data.CircleShader->SetMat4("u_ViewProjection", project);
+		m_Data.LineShader->Bind();
+		m_Data.LineShader->SetMat4("u_ViewProjection", project);
 		StartBatch();
 	}
 
@@ -212,6 +245,16 @@ namespace ENGINE
 			m_Data.CircleShader->Bind();
 			RenderCommand::DrawElement(m_Data.CircleVertexArray, m_Data.CircleIndexCount);
 			m_Data.m_stats.DrawCalls++;
+		}
+		if (m_Data.LineIndexCount)
+		{
+			uint32_t datasize = (uint32_t)((uint8_t*)m_Data.LineVertexDataPtr - (uint8_t*)m_Data.LineVertexDataBase);
+			m_Data.LineVertexBuffer->SetData((void*)m_Data.LineVertexDataBase, datasize);
+			m_Data.LineShader->Bind();
+			RenderCommand::SetLineWidth(m_Data.m_LineWidth);
+			RenderCommand::DrawLine(m_Data.LineVertexArray, m_Data.LineIndexCount);
+			m_Data.m_stats.DrawCalls++;
+
 		}
 	}
 
@@ -467,6 +510,55 @@ namespace ENGINE
 		m_Data.m_stats.QuadCount++;
 	}
 
+	void Render2D::DrawLine(const glm::vec3& p0, const glm::vec3& p1, const glm::vec4& color, int entityID)
+	{
+		m_Data.LineVertexDataPtr->position = p0;
+		m_Data.LineVertexDataPtr->color = color;
+		m_Data.LineVertexDataPtr->EntityID = entityID;
+		m_Data.LineVertexDataPtr++;
+
+		m_Data.LineVertexDataPtr->position = p1;
+		m_Data.LineVertexDataPtr->color = color;
+		m_Data.LineVertexDataPtr->EntityID = entityID;
+		m_Data.LineVertexDataPtr++;
+
+		m_Data.LineIndexCount += 2;
+	}
+	void Render2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
+	{
+		glm::vec3 p0 = glm::vec3(position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z);
+		glm::vec3 p1 = glm::vec3(position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z);
+		glm::vec3 p2 = glm::vec3(position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z);
+		glm::vec3 p3 = glm::vec3(position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z);
+
+		DrawLine(p0, p1, color, entityID);
+		DrawLine(p1, p2, color, entityID);
+		DrawLine(p2, p3, color, entityID);
+		DrawLine(p3, p0, color, entityID);
+	}
+
+	void Render2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
+	{
+		glm::vec3 lineVertices[4];
+		for (size_t i = 0; i < 4; i++)
+			lineVertices[i] = transform * m_Data.QuadVertexPosition[i];
+
+		DrawLine(lineVertices[0], lineVertices[1], color, entityID);
+		DrawLine(lineVertices[1], lineVertices[2], color, entityID);
+		DrawLine(lineVertices[2], lineVertices[3], color, entityID);
+		DrawLine(lineVertices[3], lineVertices[0], color, entityID);
+	}
+
+	void Render2D::SetLineWidth(float width)
+	{
+		m_Data.m_LineWidth = width;
+	}
+
+	float Render2D::GetLineWidth()
+	{
+		return m_Data.m_LineWidth;
+	}
+
 	void Render2D::ResetStats()
 	{
 		memset(&m_Data.m_stats, 0, sizeof(Stats));
@@ -484,6 +576,9 @@ namespace ENGINE
 
 		m_Data.CircleVertexDataPtr = m_Data.CircleVertexDataBase;
 		m_Data.CircleIndexCount = 0;
+
+		m_Data.LineVertexDataPtr = m_Data.LineVertexDataBase;
+		m_Data.LineIndexCount = 0;
 
 		m_Data.TextureCount   = 1;
 	}

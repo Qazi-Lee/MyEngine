@@ -31,6 +31,7 @@
   <ItemGroup>
     <None Include="assets\Shader\Render2D_Quad.glsl" />
     <None Include="assets\Shader\Render2D_Circle.glsl" />
+    <None Include="assets\Shader\Render2D_Line.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="head\Layer2D.h">

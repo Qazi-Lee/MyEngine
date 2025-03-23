@@ -163,7 +163,8 @@ namespace ENGINE
 					}
 					else
 					{
-							Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
+						Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
+						//Render2D::DrawRect(transform.GetTransform(), rc.color, (int)entity);
 					}
 				}
 			}

@@ -45,7 +45,6 @@ in flat float v_Thickness;
 in flat float v_Fade;
 in flat int v_EntityID;
 
-in flat int vEntityID;
 void main() 
 {
 

@@ -34,4 +34,14 @@ namespace ENGINE
 		glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, nullptr);
 		vertexarray->UnBind();
 	}
+	void OpenGLRenderAPI::DrawLine(const Ref<VertexArray>& vertexarray, const int& count) const
+	{
+		vertexarray->Bind();
+		glDrawArrays(GL_LINES, 0, count);
+		vertexarray->UnBind();
+	}
+	void OpenGLRenderAPI::SetLineWidth(float width) const
+	{
+		glLineWidth(width);
+	}
 }
