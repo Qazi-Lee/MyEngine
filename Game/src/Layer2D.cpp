@@ -150,6 +150,8 @@ void Layer2D::OnUpdate(Time t)
          m_HoveredEntity = data < 0 ? Entity() : Entity((entt::entity)data, m_ActiveScene.get());
         // std::cout <<data<<std::endl;
      }
+     //可视化物理碰撞器
+     OnOverlayRender();
     framebuffer->UnBind();
 }
 
@@ -218,6 +220,7 @@ void Layer2D::OnImGuiRender()
     m_ContentBrowserPanels->OnImGuiRender();
 
     ImGui::Begin("Setting");
+    ImGui::Checkbox("ShowPhysicsColliders", &ShowPhysicsColliders);
     auto stats = Render2D::GetStats();
     ImGui::Text("DrawCall:%d", stats.DrawCalls);
     ImGui::Text("Vertex:%d", stats.GetQuadVertexCount());
@@ -449,4 +452,62 @@ void Layer2D::OnSceneStop()
     m_ActiveScene = m_EditorScene;
     m_ScenePanels->SetSceneState(0);
     m_ScenePanels->SetScene(m_ActiveScene);
+}
+
+void Layer2D::OnOverlayRender()
+{
+    if (ShowPhysicsColliders)
+    {
+        if (m_SceneState == SceneState::Edit)
+        {
+            Render2D::BeginScene(m_EditorCamera);
+        }
+        else if (m_SceneState == SceneState::Play)
+        {
+            auto view = m_ActiveScene->GetEntityWithComponent<TransformComponent, CameraComponent>();
+            bool has = false;
+            for (auto e : view)
+            {
+                auto& cc = view.get<CameraComponent>(e);
+                auto& trans = view.get<TransformComponent>(e);
+                if (cc.Primary)
+                {
+                    Render2D::BeginScene(cc.camera, trans.GetTransform());
+                    has = true;
+                    break;
+                }
+            }
+            if (!has)
+                return;
+        }
+        auto view = m_ActiveScene->GetEntityWithComponent<TransformComponent, Rigidbody2DComponent>();
+        for (auto entityid : view)
+        {
+            //判断是方形还是圆形
+            Entity entity = { entityid,m_ActiveScene.get() };
+            auto trans = entity.GetComponent<TransformComponent>();
+            auto rg2d = entity.GetComponent<Rigidbody2DComponent>();
+            //控制尺寸
+            trans.Scale.x *= 2.0 * rg2d.size.x;
+            trans.Scale.y *= 2.0 * rg2d.size.y;
+            //增加悬浮
+            trans.Translate = glm::vec3(trans.Translate.x, trans.Translate.y, trans.Translate.z + 0.01f);
+            glm::mat4 rotation = glm::toMat4(glm::quat(trans.Rotation));
+            glm::mat4 transform = glm::translate(glm::mat4(1.0f), trans.Translate)
+                * rotation
+                * glm::scale(glm::mat4(1.0f), trans.Scale);
+
+            glm::vec4 color = { 0.0,1.0,0.0,1.0 };
+            if (entity.HasComponent<RenderQuadComponent>())
+            {
+                Render2D::DrawRect(transform, color);
+
+            }
+            else if (entity.HasComponent<RenderCircleComponent>())
+            {
+                Render2D::DrawCircle(transform, color, 0.01f);
+            }
+        }
+        Render2D::EndScene();
+    }
 }

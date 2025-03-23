@@ -23,6 +23,8 @@ private:
 	void SaveScene();
 	void OnScenePlay();
 	void OnSceneStop();
+
+	void OnOverlayRender();
 private:
 	ENGINE::GraphicsCameraController m_CameraController;
 	ENGINE::Ref<ENGINE::Texture2D>playIcon;
@@ -41,7 +43,9 @@ private:
 	bool PrimaryCamera = false;
 	bool viewportfocused = false;
 	bool viewporthovered = false;
+	bool ShowPhysicsColliders = true;
 	int ImGuizmoType = -1;
+	
 	glm::vec2 ViewportBounds[2];
 	glm::vec4 color = glm::vec4(1.0f);
 	glm::vec2 position = glm::vec2(0.0f, 0.0f);

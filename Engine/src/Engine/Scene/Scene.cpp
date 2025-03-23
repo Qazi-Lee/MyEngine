@@ -276,7 +276,7 @@ namespace ENGINE
 					float a = trans.Scale.x * rgd2d.size.x; // X 半径
 					float b = trans.Scale.y * rgd2d.size.y; // Y 半径
 					const int numSegments = 36;
-					//若需更多顶点，需修改 b2Settings.h 中的 b2_maxPolygonVertices（不推荐破坏兼容性）。已更改为36
+					//若需更多顶点，需修改 b2Settings.h 中的 b2_maxPolygonVertices（不推荐破坏兼容性）。已更改为36 影响性能
 					// 生成顶点
 					b2Vec2 vertices[numSegments];
 					vertices->SetZero();
@@ -314,6 +314,7 @@ namespace ENGINE
 		auto view = m_Registry.view<TagComponent>();
 		std::cout << "实体个数为：" << view.size() << std::endl;
 	}
+
 
 	template<typename T>
 	void Scene::OnComponentAdded(T& componen)

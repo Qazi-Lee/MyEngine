@@ -23,6 +23,12 @@ namespace ENGINE
 
 		static Ref<Scene> Copy(Ref<Scene> other);
 
+		template<typename... Components>
+		auto GetEntityWithComponent()
+		{
+			return m_Registry.view<Components...>();
+		}
+
 		void OnRuntimeStart();
 		void OnRuntimeEnd();
 
