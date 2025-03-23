@@ -147,8 +147,8 @@ void Layer2D::OnUpdate(Time t)
      {
          int data = -1;
          data = framebuffer->ReadPixel(1, (int)mx,(int)my)-1;
-         m_HoveredEntity = data == -1 ? Entity() : Entity((entt::entity)data, m_ActiveScene.get());
-         //std::cout <<data<<std::endl;
+         m_HoveredEntity = data < 0 ? Entity() : Entity((entt::entity)data, m_ActiveScene.get());
+        // std::cout <<data<<std::endl;
      }
     framebuffer->UnBind();
 }

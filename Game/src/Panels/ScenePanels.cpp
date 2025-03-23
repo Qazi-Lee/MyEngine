@@ -3,6 +3,7 @@
 #include"imgui.h"
 #include"Engine/Scene/Component.h"
 #include"glm/gtc/type_ptr.hpp"
+#include<algorithm>
 #include<filesystem>
 namespace ENGINE
 {
@@ -310,8 +311,12 @@ namespace ENGINE
 				ImGui::EndCombo();
 			}
 			//控制尺寸
-			ImGui::DragFloat("SizeX", &rgd2d.size.x, 0.01f, 0.0f, 0.5f);
-			ImGui::DragFloat("SizeY", &rgd2d.size.y, 0.01f, 0.0f, 0.5f);
+			float sizex = rgd2d.size.x;
+			float sizey = rgd2d.size.y;
+			ImGui::DragFloat("SizeX", &sizex, 0.01f, 0.0001f, 0.5f);
+			ImGui::DragFloat("SizeY", &sizey, 0.01f, 0.0001f, 0.5f);
+			rgd2d.size.x = std::max(0.001f, sizex);
+			rgd2d.size.y = std::max(0.001f, sizey);
 			//旋转禁用
 			ImGui::Checkbox("Fixed Rotation", &rgd2d.FixedRotation);
 

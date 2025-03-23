@@ -164,7 +164,6 @@ namespace ENGINE
 					else
 					{
 						Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
-						//Render2D::DrawRect(transform.GetTransform(), rc.color, (int)entity);
 					}
 				}
 			}
@@ -276,8 +275,8 @@ namespace ENGINE
 					//近似模拟圆形，只支持最大8边形
 					float a = trans.Scale.x * rgd2d.size.x; // X 半径
 					float b = trans.Scale.y * rgd2d.size.y; // Y 半径
-					const int numSegments = 24;
-					//若需更多顶点，需修改 b2Settings.h 中的 b2_maxPolygonVertices（不推荐破坏兼容性）。已更改为24
+					const int numSegments = 36;
+					//若需更多顶点，需修改 b2Settings.h 中的 b2_maxPolygonVertices（不推荐破坏兼容性）。已更改为36
 					// 生成顶点
 					b2Vec2 vertices[numSegments];
 					vertices->SetZero();
