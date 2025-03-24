@@ -156,6 +156,12 @@
     <ClInclude Include="src\Engine\Render\EditorCamera.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\DirectX12\DirectX12Context.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanContext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -252,6 +258,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Render\EditorCamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\DirectX12\DirectX12Context.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

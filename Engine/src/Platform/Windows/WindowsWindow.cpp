@@ -5,6 +5,8 @@
 #include<Engine/Event/MouseEvent.h>
 #include<Engine/Event/WindowEvent.h>
 
+#include"Platform/OpenGL/OpenglContext.h"
+#include"Platform/Vulkan/VulkanContext.h"
 
 namespace ENGINE {
 
@@ -35,10 +37,19 @@ namespace ENGINE {
 		int success = glfwInit();
 		if (success)
 		{
-			LOG_CORE_INFO("glfw初始化成功");                                                       
+			LOG_CORE_INFO("glfw初始化成功");
 		}
-		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
-		m_Context = new OpenglContext(m_Window);
+		switch (m_API)
+		{
+		case GraphicsAPI::OPENGL:
+			OpenglInit(); break;
+		case GraphicsAPI::VULKAN:
+			VulkanInit(); break;
+		case GraphicsAPI::DIRECTX12:
+			DirectXInit(); break;
+		default:
+			OpenglInit(); break;
+		}
 		//创建上下文
 		m_Context->Init();
 		glfwSetWindowUserPointer(m_Window, &m_Data);
@@ -50,19 +61,19 @@ namespace ENGINE {
 			{
 			case GLFW_PRESS:
 			{
-				KeyPressedEvent event(key,scancode, 0);
+				KeyPressedEvent event(key, scancode, 0);
 				data.m_CallbackFn(event);
-				break; 
+				break;
 			}
 			case GLFW_RELEASE:
 			{
-				KeyReleaseEvent event(key,scancode);
+				KeyReleaseEvent event(key, scancode);
 				data.m_CallbackFn(event);
-				break; 
+				break;
 			}
 			case GLFW_REPEAT:
 			{
-				KeyPressedEvent event(key,scancode, true);
+				KeyPressedEvent event(key, scancode, true);
 				data.m_CallbackFn(event);
 				break;
 			}
@@ -78,7 +89,7 @@ namespace ENGINE {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			data.Width = width;
 			data.Height = height;
-			WindowResizeEvent event(width,height);
+			WindowResizeEvent event(width, height);
 			data.m_CallbackFn(event);
 			});
 		/*鼠标函数*/
@@ -87,7 +98,7 @@ namespace ENGINE {
 			switch (action)
 			{
 			case GLFW_PRESS: {
-				MousePressedEvent event(button,0);
+				MousePressedEvent event(button, 0);
 				data.m_CallbackFn(event);
 				break;
 			}
@@ -117,12 +128,32 @@ namespace ENGINE {
 		glfwSetCharCallback(m_Window, [](GLFWwindow* window, uint32_t codepoint)
 			{
 				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
-				KeyTypedEvent event(codepoint,0);
+				KeyTypedEvent event(codepoint, 0);
 				data.m_CallbackFn(event);
 			});
+		return;
 	}
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
+		glfwTerminate();
+	}
+	void WindowsWindow::OpenglInit()
+	{
+#ifdef GLFW_INCLUDE_VULKAN
+#undef GLFW_INCLUDE_VULKAN
+#endif 
+		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
+		m_Context = new OpenglContext(m_Window);
+	}
+	void WindowsWindow::VulkanInit()
+	{
+ #define GLFW_INCLUDE_VULKAN
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
+		m_Context = new VulkanContext(m_Window);
+	}
+	void WindowsWindow::DirectXInit()
+	{
 	}
 }

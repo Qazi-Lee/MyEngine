@@ -1,6 +1,6 @@
 #pragma once
 #include<Engine/Window.h>
-#include"Platform/OpenGL/OpenglContext.h"
+#include"Engine/Render/GraphicsContext.h"
 #include<GLFW/glfw3.h>
 namespace ENGINE {
 	class  WindowsWindow :public Window
@@ -15,8 +15,13 @@ namespace ENGINE {
 		void SetEventCallbackFn(const EventCallbackFn& callback)override { m_Data.m_CallbackFn = callback; }
 		inline void* GetNativeWindow()const override { return m_Window; };
 	private:
-		virtual void Init(const WindowPros& pros);
-		virtual void Shutdown();
+		 void Init(const WindowPros& pros);
+		 void Shutdown();
+
+		 void OpenglInit();
+		 void VulkanInit();
+		 void DirectXInit();
+
 	private:
 		GLFWwindow* m_Window;
 		GraphicsContext* m_Context;
@@ -27,5 +32,12 @@ namespace ENGINE {
 			int Height;
 			EventCallbackFn m_CallbackFn;
 		}m_Data;
+		enum class GraphicsAPI
+		{
+			OPENGL=0,
+			VULKAN,
+			DIRECTX12
+		};
+		GraphicsAPI m_API= GraphicsAPI::OPENGL;
 	};
 }

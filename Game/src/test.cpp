@@ -79,9 +79,6 @@ class Game :public ENGINE:: Application
 {
 public:
 	Game() {
-	
-		//ExampleLayer* example = new ExampleLayer();
-		//PushLayer(example);
 		Layer2D* layer2D = new Layer2D();
 		PushLayer(layer2D);
 	};
