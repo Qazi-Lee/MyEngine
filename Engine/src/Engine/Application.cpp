@@ -25,7 +25,6 @@ namespace ENGINE {
 	
 		while (run)
 		{
-
 			float now = ENGINE::Time::GetTime();
 			Time t = Time(now - LastFrameTime);
 			LastFrameTime = now;

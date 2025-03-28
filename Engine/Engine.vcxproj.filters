@@ -162,6 +162,9 @@
     <ClInclude Include="src\Platform\Vulkan\VulkanContext.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Platform\Vulkan\VulkanInstance.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -264,6 +267,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\Vulkan\VulkanContext.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\Vulkan\VulkanInstance.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -10,6 +10,7 @@ namespace ENGINE
 		OpenglContext(GLFWwindow*windowHandle);
 		void Init()override;
 		void SwapBuffer()override;
+		void* GetInstance()override;
 	private:
 		GLFWwindow* m_WindowHandle;
 	};

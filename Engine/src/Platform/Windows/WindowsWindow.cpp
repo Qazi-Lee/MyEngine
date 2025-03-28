@@ -8,6 +8,7 @@
 #include"Platform/OpenGL/OpenglContext.h"
 #include"Platform/Vulkan/VulkanContext.h"
 
+
 namespace ENGINE {
 
 	Window* Window::Creat(const WindowPros& pros)
@@ -18,6 +19,7 @@ namespace ENGINE {
 	{
 		Init(pros);
 	}
+
 	WindowsWindow::~WindowsWindow()
 	{
 		Shutdown();
@@ -30,6 +32,7 @@ namespace ENGINE {
 
 	void WindowsWindow::Init(const WindowPros& pros)
 	{
+
 		m_Data.Title = pros.Title;
 		m_Data.Height = pros.Height;
 		m_Data.Width = pros.Width;
@@ -135,6 +138,7 @@ namespace ENGINE {
 	}
 	void WindowsWindow::Shutdown()
 	{
+
 		glfwDestroyWindow(m_Window);
 		glfwTerminate();
 	}
@@ -148,7 +152,6 @@ namespace ENGINE {
 	}
 	void WindowsWindow::VulkanInit()
 	{
- #define GLFW_INCLUDE_VULKAN
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		m_Window = glfwCreateWindow(m_Data.Width, m_Data.Height, m_Data.Title.c_str(), NULL, NULL);
 		m_Context = new VulkanContext(m_Window);
@@ -156,4 +159,5 @@ namespace ENGINE {
 	void WindowsWindow::DirectXInit()
 	{
 	}
+
 }

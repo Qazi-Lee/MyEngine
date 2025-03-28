@@ -26,4 +26,9 @@ namespace ENGINE
 		glfwSwapBuffers(m_WindowHandle);
 	}
 
+	void* OpenglContext::GetInstance()
+	{
+		return nullptr;
+	}
+
 }

@@ -13,6 +13,12 @@ namespace ENGINE {
 		WindowPros(const std::string& title = "MyEngine", int width = 1280, int height = 720)
 			:Title(title), Width(width), Height(height){}
 	};
+	enum class GraphicsAPI
+	{
+		OPENGL = 0,
+		VULKAN,
+		DIRECTX12
+	};
 	class  Window
 	{
 	public:
@@ -23,6 +29,8 @@ namespace ENGINE {
 		virtual int GetWidth() const = 0;
 		virtual int GetHeight() const = 0;
 		virtual void* GetNativeWindow()const = 0;
+		virtual void* GetContext()const = 0;
+		virtual GraphicsAPI GetGraphicsAPI()const = 0;
 		//参数为默认值
 		static Window* Creat(const WindowPros& windowpros=WindowPros());
 		virtual void SetEventCallbackFn(const EventCallbackFn& callback)=0;
