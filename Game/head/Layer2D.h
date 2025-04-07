@@ -38,7 +38,7 @@ private:
 	ENGINE::EditorCamera m_EditorCamera;
 
 
-	ENGINE::Entity e;
+	ENGINE::Entity camera;
 	ENGINE::Entity m_HoveredEntity=ENGINE::Entity();
 	bool PrimaryCamera = false;
 	bool viewportfocused = false;

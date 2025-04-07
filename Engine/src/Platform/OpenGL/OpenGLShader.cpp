@@ -218,7 +218,7 @@ namespace ENGINE
 				break;
 			}
 			std::string type = source.substr(pos + FlagLength, end - (pos + FlagLength));
-			std::cout << type << std::endl;
+		//	std::cout << type << std::endl;
 			//跳过中途的换行符
 			size_t next = source.find_first_not_of("\r\n", end);
 			pos = source.find(Flag, next);

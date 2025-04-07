@@ -8,5 +8,6 @@ int main(int argc, char** argv)
 	auto app = ENGINE::CreatApp();
 	app->Run();
 	delete app;
+	return 0;
 }
 #endif // ENGINE_PLATFORM_WINDOWS

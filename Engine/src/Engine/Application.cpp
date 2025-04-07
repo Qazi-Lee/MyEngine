@@ -1,7 +1,10 @@
 #include"pch.h"
 #include "Application.h"
 #include"Render/Render.h"
-
+#include"mono/jit/jit.h"
+#include"mono/metadata/assembly.h"
+#include"mono/metadata/threads.h"
+#include"mono/metadata/mono-gc.h"
 //定义一个绑定回调函数的宏
 
 namespace ENGINE {
@@ -9,6 +12,8 @@ namespace ENGINE {
 
 	Application::Application()
 	{
+		//初始化mono
+		mono_set_dirs("C:\\Program Files\\Mono\\lib", "C:\\Program Files\\Mono\\etc");
 		m_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::Creat());
 		m_Window->SetEventCallbackFn(BIND_EVENT_FN(Application::OnEvent));
@@ -18,7 +23,12 @@ namespace ENGINE {
 	};
 	Application::~Application()
 	{
-
+		//存在Bug
+		//if (mono_get_root_domain())
+		//{
+		//	mono_thread_exit();
+		//	mono_jit_cleanup(mono_get_root_domain());
+		//}
 	}
 	void ENGINE::Application::Run()
 	{

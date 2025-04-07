@@ -10,6 +10,20 @@
 
 namespace ENGINE
 {
+	static const char* LoadScriptFromFile(std::string path)
+	{
+		std::ifstream file(path);
+		if (!file.is_open()) {
+			// 处理文件打开失败
+			return std::string().c_str();
+		}
+		// 读取文件内容到std::string
+		std::string code((std::istreambuf_iterator<char>(file)),
+			std::istreambuf_iterator<char>());
+		// 转换为const char*
+		return code.c_str();
+	}
+
 	template<typename Component>
 	static void CopyComponent(entt::registry& src, entt::registry& tar,entt::entity& srcentity,entt::entity&tarentity)
 	{
@@ -49,6 +63,32 @@ namespace ENGINE
 	{
 		if(!m_Registry.empty())
 		{ 
+			//CScript
+			{
+				auto view = m_Registry.view<CScriptComponent>();
+				for (auto entity : view)
+				{
+					auto& csc = view.get<CScriptComponent>(entity);
+					if (csc.Instance.use_count() == 0)
+					{
+						//输入路径
+						if (!csc.Path.empty())
+						{
+							ScriptableEntity *se= new ScriptableEntity(csc.Path.c_str(),"Player",(int)entity,this);
+							se->m_entity = Entity(entity, this);
+							csc.Instance.reset(se);
+							csc.Instance->OnCreate();
+						}
+
+					}
+
+					if (csc.Instance.use_count() != 0)
+					{
+						csc.Instance->OnUpdate(t.GetSecond());
+					}
+
+				}
+			}
 			//Update Script
 			{
 				auto view = m_Registry.view<NativeScriptComponent>();
@@ -58,10 +98,11 @@ namespace ENGINE
 					if (!nsc.Instance)
 					{
 						nsc.Instance = nsc.InitInstanceFunc();
+						//将脚本和实体连接
 						nsc.Instance->m_entity = Entity(entity, this);
 						nsc.Instance->OnCreate();
 					}
-					nsc.Instance->OnUpdate(t);
+					nsc.Instance->OnUpdate(t.GetSecond());
 				}
 
 			}
@@ -232,7 +273,9 @@ namespace ENGINE
 				CopyComponent<CameraComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<ScriptComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<NativeScriptComponent>(SrcRegistry, target, srcid, tarid);
+				CopyComponent<CScriptComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<Rigidbody2DComponent>(SrcRegistry, target, srcid, tarid);
+
 			}
 		);
 
@@ -315,7 +358,7 @@ namespace ENGINE
 		std::cout << "实体个数为：" << view.size() << std::endl;
 	}
 
-
+	//Add
 	template<typename T>
 	void Scene::OnComponentAdded(T& componen)
 	{
@@ -355,11 +398,23 @@ namespace ENGINE
 
 	}
 	template<>
+	void Scene::OnComponentAdded<CScriptComponent>(CScriptComponent& component)
+	{		
+
+	}
+	template<>
 	void Scene::OnComponentAdded<Rigidbody2DComponent>(Rigidbody2DComponent& component)
 	{
 	}
 	template<>
 	void Scene::OnComponentAdded<RenderCircleComponent>(RenderCircleComponent& component)
 	{
+	}
+
+	//Remove
+	template<typename T>
+	void Scene::OnComponentRemoved(T& conponent)
+	{
+
 	}
 }

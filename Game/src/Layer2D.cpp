@@ -102,6 +102,25 @@ void Layer2D::OnAttach()
     m_ScenePanels = std::make_shared<ScenePanels>(m_ActiveScene);
     m_ContentBrowserPanels = std::make_shared<ContentBrowserPanels>();
 
+    //camera = m_ActiveScene->CreateEntity();
+    //camera.AddComponent<CameraComponent>();
+
+    //class CameraControl :public ScriptableEntity
+    //{
+    //public:
+    //    void OnUpdate(ENGINE::Time t)override
+    //    {
+    //        if (Input::IsKeyPress(ME_KEY_D))
+    //        {
+    //            auto& transform = GetComponent<TransformComponent>();
+    //            transform.Translate.x += t.GetSecond();
+    //        }
+    //    }
+
+    //};
+    //camera.AddComponent<NativeScriptComponent>();
+    //auto& ns=camera.GetComponent<NativeScriptComponent>();
+    //ns.Bind<CameraControl>();
 }
 
 

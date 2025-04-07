@@ -291,51 +291,108 @@ namespace ENGINE
 			{
 				ImGui::OpenPopup("Rigidbody2D");
 			}
-			auto& rgd2d = entity.GetComponent<Rigidbody2DComponent>();
-			//控制刚体类型
-			const char* bodyTypeStr[] = { "Static","Dynamic","Kinematic" };
-			const char* currentBodyType = bodyTypeStr[(int)rgd2d.Type];
-			if (ImGui::BeginCombo("Body Type", currentBodyType))
+			if (open)
 			{
-				for (int i = 0; i < 3; i++)
+				auto& rgd2d = entity.GetComponent<Rigidbody2DComponent>();
+				//控制刚体类型
+				const char* bodyTypeStr[] = { "Static","Dynamic","Kinematic" };
+				const char* currentBodyType = bodyTypeStr[(int)rgd2d.Type];
+				if (ImGui::BeginCombo("Body Type", currentBodyType))
 				{
-					bool isSelected = currentBodyType == bodyTypeStr[i];
-					if (ImGui::Selectable(bodyTypeStr[i], isSelected))
+					for (int i = 0; i < 3; i++)
 					{
-						currentBodyType = bodyTypeStr[i];
-						rgd2d.Type = (Rigidbody2DComponent::BodyType)i;
+						bool isSelected = currentBodyType == bodyTypeStr[i];
+						if (ImGui::Selectable(bodyTypeStr[i], isSelected))
+						{
+							currentBodyType = bodyTypeStr[i];
+							rgd2d.Type = (Rigidbody2DComponent::BodyType)i;
+						}
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
 					}
-					if (isSelected)
-						ImGui::SetItemDefaultFocus();
+					ImGui::EndCombo();
 				}
-				ImGui::EndCombo();
-			}
-			//控制尺寸
-			float sizex = rgd2d.size.x;
-			float sizey = rgd2d.size.y;
-			ImGui::DragFloat("SizeX", &sizex, 0.01f, 0.0001f, 0.5f);
-			ImGui::DragFloat("SizeY", &sizey, 0.01f, 0.0001f, 0.5f);
-			rgd2d.size.x = std::max(0.001f, sizex);
-			rgd2d.size.y = std::max(0.001f, sizey);
-			//旋转禁用
-			ImGui::Checkbox("Fixed Rotation", &rgd2d.FixedRotation);
+				//控制尺寸
+				float sizex = rgd2d.size.x;
+				float sizey = rgd2d.size.y;
+				ImGui::DragFloat("SizeX", &sizex, 0.01f, 0.0001f, 0.5f);
+				ImGui::DragFloat("SizeY", &sizey, 0.01f, 0.0001f, 0.5f);
+				rgd2d.size.x = std::max(0.001f, sizex);
+				rgd2d.size.y = std::max(0.001f, sizey);
+				//旋转禁用
+				ImGui::Checkbox("Fixed Rotation", &rgd2d.FixedRotation);
 
-			//夹具参数控制
-			ImGui::DragFloat("Density", &rgd2d.Density, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Friction", &rgd2d.Friction, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Restitution", &rgd2d.Restitution, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Restitution Threshold", &rgd2d.RestitutionThreshold, 0.01f, 0.0f);
+				//夹具参数控制
+				ImGui::DragFloat("Density", &rgd2d.Density, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Friction", &rgd2d.Friction, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution", &rgd2d.Restitution, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Restitution Threshold", &rgd2d.RestitutionThreshold, 0.01f, 0.0f);
 
 
-			if (ImGui::BeginPopup("Rigidbody2D", ImGuiPopupFlags_NoOpenOverExistingPopup))
-			{
-				if (ImGui::MenuItem("Delete Component"))
+				if (ImGui::BeginPopup("Rigidbody2D", ImGuiPopupFlags_NoOpenOverExistingPopup))
 				{
-					entity.RemoveComponent<Rigidbody2DComponent>();
+					if (ImGui::MenuItem("Delete Component"))
+					{
+						entity.RemoveComponent<Rigidbody2DComponent>();
+					}
+					ImGui::EndPopup();
 				}
-				ImGui::EndPopup();
+				ImGui::TreePop();
 			}
-			ImGui::TreePop();
+			
+		}
+
+		if (entity.HasComponent<CScriptComponent>())
+		{
+			bool open = ImGui::TreeNodeEx((void*)typeid(CScriptComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "CScript");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
+			if (ImGui::Button("+"))
+			{
+				ImGui::OpenPopup("CScript");
+			}
+			if (open)
+			{
+				auto& asc = entity.GetComponent<CScriptComponent>();
+				ImGui::Text("C#:");
+				std::string name = asc.ClassName;
+				ImGui::SameLine();
+				ImVec2 buttonsize = { ImGui::GetWindowWidth() - 100,20 };
+				if (ImGui::Button(name.c_str(),buttonsize))
+				{
+					if (!asc.Path.empty())
+					{
+						std::string command = "start " + asc.Path;
+						system(command.c_str());
+					}
+				}
+				//拖拽源
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path aspath = std::filesystem::path(path);
+						if (aspath.extension().string() == ".cs" )
+						{
+							asc.ClassName = aspath.filename().string();
+							asc.Path = aspath.string();
+						}
+						else
+						{
+							LOG_INFO("脚本格式错误");
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+				if (ImGui::BeginPopup("CScript", ImGuiPopupFlags_NoOpenOverExistingPopup))
+				{
+					if (ImGui::MenuItem("Delete Component"))
+					{
+						entity.RemoveComponent<CScriptComponent>();
+					}
+					ImGui::EndPopup();
+				}
+				ImGui::TreePop();
+			}
 		}
 	}
 	void ScenePanels::AddComponent(Entity entity)
@@ -387,6 +444,13 @@ namespace ENGINE
 
 						entity.AddComponent<Rigidbody2DComponent>();
 					}
+				}
+			}
+			if (!entity.HasComponent<CScriptComponent>())
+			{
+				if (ImGui::MenuItem("CScriptComponent"))
+				{
+					entity.AddComponent<CScriptComponent>();
 				}
 			}
 			ImGui::EndPopup();

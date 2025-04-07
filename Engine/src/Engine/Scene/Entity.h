@@ -45,6 +45,8 @@ namespace ENGINE
 		void RemoveComponent()
 		{
 			m_Scene->m_Registry.remove<T>(m_Entity);
+			//增加移除组件函数回调
+
 		}
 
 

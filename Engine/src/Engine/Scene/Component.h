@@ -91,6 +91,17 @@ namespace ENGINE
 		}
 	};
 
+	struct CScriptComponent
+	{
+		//类名称
+		std::string ClassName;
+		std::string Path;
+
+		//绑定一个脚本实体
+		std::shared_ptr<ScriptableEntity> Instance;
+		CScriptComponent() = default;
+		CScriptComponent(const CScriptComponent&) = default;
+	};
 	//2d刚体组件
 	struct Rigidbody2DComponent
 	{

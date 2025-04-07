@@ -52,6 +52,7 @@
     <ClInclude Include="src\Engine\Scene\SceneCamera.h" />
     <ClInclude Include="src\Engine\Scene\SceneSerialization.h" />
     <ClInclude Include="src\Engine\Scene\ScriptableEntity.h" />
+    <ClInclude Include="src\Engine\Scene\ScriptEngine.h" />
     <ClInclude Include="src\Engine\Time.h" />
     <ClInclude Include="src\Engine\Utils\PlatformUtils.h" />
     <ClInclude Include="src\Engine\Window.h" />
@@ -91,6 +92,8 @@
     <ClCompile Include="src\Engine\Scene\Scene.cpp" />
     <ClCompile Include="src\Engine\Scene\SceneCamera.cpp" />
     <ClCompile Include="src\Engine\Scene\SceneSerialization.cpp" />
+    <ClCompile Include="src\Engine\Scene\ScriptableEntity.cpp" />
+    <ClCompile Include="src\Engine\Scene\ScriptEngine.cpp" />
     <ClCompile Include="src\Engine\Time.cpp" />
     <ClCompile Include="src\pch.cpp" />
     <ClCompile Include="src\Platform\DirectX12\DirectX12Context.cpp" />
@@ -108,6 +111,9 @@
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\angelscript\angelscript.vcxproj">
+      <Project>{d482afa0-3152-48ce-aa03-fa55c91e86f9}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\box2d\box2d.vcxproj">
       <Project>{270ad394-dc81-421a-8d21-2ba8aeadae9b}</Project>
     </ProjectReference>
@@ -122,6 +128,9 @@
     </ProjectReference>
     <ProjectReference Include="..\ImGui\ImGui.vcxproj">
       <Project>{a4a2cc2a-d3c8-4f54-bb89-71f23743906a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ScriptEngine\ScriptEngine.csproj">
+      <Project>{ce8f8160-287d-459e-b402-67aa9d0cf302}</Project>
     </ProjectReference>
     <ProjectReference Include="..\stb_image\stb_image.vcxproj">
       <Project>{c9353206-2b94-4567-9bf7-9c25ecf744ce}</Project>
@@ -224,12 +233,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;ENGINE_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src;$(SolutionDir)glad;$(SolutionDir)ImGui;$(SolutionDir)glm;$(SolutionDir)stb_image;$(SolutionDir)Third\include;D:\MyEngine\MyEngine\GLFW\include;$(SolutionDir)Engine\vender;$(SolutionDir)yaml\include;$(SolutionDir)box2d\include;C:\VulkanSDK\1.3.250.1\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src;$(SolutionDir)glad;$(SolutionDir)ImGui;$(SolutionDir)glm;$(SolutionDir)stb_image;$(SolutionDir)Third\include;D:\MyEngine\MyEngine\GLFW\include;$(SolutionDir)Engine\vender;$(SolutionDir)yaml\include;$(SolutionDir)box2d\include;C:\VulkanSDK\1.3.250.1\Include;$(SolutionDir)Mono\include</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <Optimization>Disabled</Optimization>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>

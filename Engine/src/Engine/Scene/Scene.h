@@ -36,6 +36,8 @@ namespace ENGINE
 	private:
 		template<typename T>
 		void OnComponentAdded(T& component);
+		template<typename T>
+		void OnComponentRemoved(T& conponent);
 	private:
 		entt::registry m_Registry;
 		uint32_t m_ViewportWidth = 0, m_ViewportHeight = 0;
