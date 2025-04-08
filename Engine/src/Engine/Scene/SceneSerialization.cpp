@@ -217,6 +217,15 @@ namespace ENGINE
 			out << YAML::EndMap;
 
 		}
+		//C#脚本组件
+		if (entity.HasComponent<CScriptComponent>())
+		{
+			out << YAML::Key << "CScriptComponent" << YAML::BeginMap;
+			auto& csc = entity.GetComponent<CScriptComponent>();
+			out << YAML::Key << "ClassName" << YAML::Value << csc.ClassName.c_str();
+			out << YAML::Key << "Path" << YAML::Value << csc.Path.c_str();
+			out << YAML::EndMap;
+		}
 		//TODO:等待其他组件添加
 		out << YAML::EndMap;
 		out << YAML::EndMap;
@@ -348,6 +357,14 @@ namespace ENGINE
 					bc.Friction = bodyComponent["Friction"].as<float>();
 					bc.Restitution= bodyComponent["Restitution"].as<float>();
 					bc.RestitutionThreshold= bodyComponent["RestitutionThreshold"].as<float>();
+				}
+				//C#脚本组件
+				auto csComponent = entity["CScriptComponent"];
+				if (csComponent)
+				{
+					auto& csc = DeserializationEntity.AddComponent<CScriptComponent>();
+					csc.ClassName = csComponent["ClassName"].as<std::string>();
+					csc.Path = csComponent["Path"].as<std::string>();
 				}
 			}
 		}

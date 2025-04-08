@@ -8,8 +8,7 @@ public class Derived : MonoBehavior
 {
     public override void OnCreate()
     {
-         Console.WriteLine("OnCreate");
-         
+       //  Console.WriteLine("OnCreate");
     }
     public override void OnDestroy()
     {
