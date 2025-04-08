@@ -12,7 +12,6 @@ namespace ScriptEngine
         public int EntityID=0;
     }
 
-
     public class TransformComponent:Component
     {
         public Vector3 Translation

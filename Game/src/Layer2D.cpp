@@ -97,30 +97,11 @@ void Layer2D::OnAttach()
     fbd.width = 1280; fbd.height = 720;
     framebuffer = FrameBuffer::Create(fbd);
 
-    m_EditorScene = std::make_shared<Scene>();
-    m_ActiveScene = m_EditorScene;
+    m_SceneManager = SceneManager(std::make_shared<Scene>());
+    m_ActiveScene = m_SceneManager.GetScene();
     m_ScenePanels = std::make_shared<ScenePanels>(m_ActiveScene);
     m_ContentBrowserPanels = std::make_shared<ContentBrowserPanels>();
 
-    //camera = m_ActiveScene->CreateEntity();
-    //camera.AddComponent<CameraComponent>();
-
-    //class CameraControl :public ScriptableEntity
-    //{
-    //public:
-    //    void OnUpdate(ENGINE::Time t)override
-    //    {
-    //        if (Input::IsKeyPress(ME_KEY_D))
-    //        {
-    //            auto& transform = GetComponent<TransformComponent>();
-    //            transform.Translate.x += t.GetSecond();
-    //        }
-    //    }
-
-    //};
-    //camera.AddComponent<NativeScriptComponent>();
-    //auto& ns=camera.GetComponent<NativeScriptComponent>();
-    //ns.Bind<CameraControl>();
 }
 
 
@@ -251,6 +232,64 @@ void Layer2D::OnImGuiRender()
     }
     ImGui::Text("SelectedEntity:%s", se.c_str());
     ImGui::End();
+
+
+    ImGui::Begin("SceneController");
+    for (int i = 0; i < m_SceneManager.size(); i++)
+    {
+        ImGui::PushID(i);
+
+        std::string name = m_SceneManager.SceneMap[m_SceneManager.GetScene(i)];
+        char* buffer =(char*)name.c_str();
+        if (ImGui::InputText("", buffer, 128))
+        {
+            if (ImGui::IsItemEdited()) {
+                std::string rename(buffer);
+                m_SceneManager.RenameScene(rename);
+            }
+        }
+
+        ImGui::SameLine(0, ImGui::GetWindowSize().x / 7);
+        bool isSelected = m_SceneManager.GetScene(i) == m_SceneManager.GetScene();
+        if (isSelected)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.9f, 0.2f, 0.2f, 1.0f)); // 高亮
+        }
+        if (ImGui::Button("!", ImVec2(ImGui::GetWindowSize().x / 7, 20)))
+        {
+            m_SceneManager.SetScene(i);
+            m_ActiveScene = m_SceneManager.GetScene();
+        }
+        if (isSelected)
+        {
+            ImGui::PopStyleColor(1);
+        }
+
+        if (ImGui::BeginPopupContextItem())
+        {
+            if (ImGui::MenuItem("Delete Scene"))
+            {
+                if (m_SceneManager.size() > 1)
+                {
+                    m_SceneManager.DeleteScene(i);
+                    m_SceneManager.SetScene(0);
+                    m_ActiveScene = m_SceneManager.GetScene();
+                }
+            }
+            ImGui::EndPopup();
+        }
+        ImGui::PopID();
+    }
+    if (ImGui::Button("Add New Scene",ImVec2(ImGui::GetWindowSize().x,20)))
+    {
+        m_SceneManager.AddScene();
+    }
+    if (ImGui::Button("Load now Scene", ImVec2(ImGui::GetWindowSize().x, 20)))
+    {
+
+    }
+    ImGui::End();
+
 
     ImGui::Begin("Viewport");
 
@@ -409,8 +448,8 @@ void Layer2D::NewScene()
 {
     if (m_SceneState != SceneState::Edit)
         OnSceneStop();
-    m_EditorScene = std::make_shared<Scene>();
-    m_ActiveScene = m_EditorScene;
+    m_SceneManager.ResetScene();
+    m_ActiveScene = m_SceneManager.GetScene();
     m_ActiveScene->OnViewportResize(viewportsize.x, viewportsize.y);
     m_ScenePanels->SetScene(m_ActiveScene);
 }
@@ -434,12 +473,11 @@ void Layer2D::OpenScene(std::filesystem::path filepath)
         LOG_CORE_ERROR("Could not load {0} - not a scene file", filepath.filename().string());
         return;
     }
-    m_EditorScene = std::make_shared<Scene>();
-
-    SceneSerialization m_SceneSerialization(m_EditorScene);
+    m_SceneManager.ResetScene(filepath.stem().string());
+    SceneSerialization m_SceneSerialization(m_SceneManager.GetScene());
     m_SceneSerialization.Deserialize(filepath.string());
 
-    m_ActiveScene = m_EditorScene;
+    m_ActiveScene = m_SceneManager.GetScene();
     m_ScenePanels->SetScene(m_ActiveScene);
 
     m_ActiveScene->OnViewportResize(viewportsize.x, viewportsize.y);
@@ -450,7 +488,7 @@ void Layer2D::SaveScene()
     std::string filepath = FileDialogs::SaveFile("Engine Scene (*.scene) \0*.scene\0");
     if (!filepath.empty())
     {
-        SceneSerialization m_SceneSerialization(m_EditorScene);
+        SceneSerialization m_SceneSerialization(m_SceneManager.GetScene());
         m_SceneSerialization.Serialize(filepath);
     }
 }
@@ -458,7 +496,7 @@ void Layer2D::SaveScene()
 void Layer2D::OnScenePlay()
 {
     m_SceneState = SceneState::Play;
-    m_ActiveScene = Scene::Copy(m_EditorScene);
+    m_ActiveScene = Scene::Copy(m_SceneManager.GetScene());
     m_ActiveScene->OnRuntimeStart();
     m_ScenePanels->SetSceneState(1);
     m_ScenePanels->SetScene(m_ActiveScene);
@@ -468,7 +506,7 @@ void Layer2D::OnSceneStop()
 {
     m_SceneState = SceneState::Edit;
     m_ActiveScene->OnRuntimeEnd();
-    m_ActiveScene = m_EditorScene;
+    m_ActiveScene = m_SceneManager.GetScene();
     m_ScenePanels->SetSceneState(0);
     m_ScenePanels->SetScene(m_ActiveScene);
 }

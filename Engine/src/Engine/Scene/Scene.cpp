@@ -89,28 +89,10 @@ namespace ENGINE
 
 				}
 			}
-			//Update Script
-			{
-				auto view = m_Registry.view<NativeScriptComponent>();
-				for (auto entity : view)
-				{
-					auto& nsc = view.get<NativeScriptComponent>(entity);
-					if (!nsc.Instance)
-					{
-						nsc.Instance = nsc.InitInstanceFunc();
-						//将脚本和实体连接
-						nsc.Instance->m_entity = Entity(entity, this);
-						nsc.Instance->OnCreate();
-					}
-					nsc.Instance->OnUpdate(t.GetSecond());
-				}
-
-			}
 			//Physic2D
 			{
-
 				int32 velocityIterations = 6;   // 速度约束迭代次数
-				int32 positionIterations = 2;   // 位置约束迭代次数
+				int32 positionIterations = 2;   // 位置约束迭代次数		
 				m_b2World->Step(t.GetSecond(), velocityIterations, positionIterations);
 				auto view = m_Registry.view<TransformComponent, Rigidbody2DComponent>();
 				for(auto entity:view)
@@ -119,13 +101,24 @@ namespace ENGINE
 					auto& rgd2d =view.get<Rigidbody2DComponent>(entity);
 
 					b2Body* body = (b2Body*)rgd2d.RuntimeBody;
-					const auto& position = body->GetPosition();
-					
-					const auto& angle = body->GetAngle();
+					if (body->GetType() == b2_kinematicBody)
+					{
+						b2Vec2 currentPos = body->GetPosition();
+						b2Vec2 targetPos = { trans.Translate.x,trans.Translate.y };
+						b2Vec2 newPos = currentPos + 0.1f * (targetPos - currentPos); // 插值
+						body->SetTransform(newPos, body->GetAngle());
+					}
+					else
+					{
+						const auto& position = body->GetPosition();
 
-					trans.Translate.x= position.x;
-					trans.Translate.y= position.y;
-					trans.Rotation.z = angle;
+						const auto& angle = body->GetAngle();
+
+						trans.Translate.x = position.x;
+						trans.Translate.y = position.y;
+						trans.Rotation.z = angle;
+					}
+
 				}
 
 			}
@@ -287,7 +280,6 @@ namespace ENGINE
 		////输入重力创建世界
 		b2Vec2 gravity(0.0f, -9.8f);
 		m_b2World = new b2World(gravity);
-		//m_b2World = new b2World({2.0,1.0});
 		//创建body
 		if (!m_Registry.empty())
 		{

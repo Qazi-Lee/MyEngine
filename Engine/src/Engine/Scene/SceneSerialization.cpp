@@ -214,6 +214,7 @@ namespace ENGINE
 			out << YAML::Key << "Friction" << YAML::Value << rg2d.Friction;
 			out << YAML::Key << "Restitution" << YAML::Value << rg2d.Restitution;
 			out << YAML::Key << "RestitutionThreshold" << YAML::Value << rg2d.RestitutionThreshold;
+			out << YAML::Key << "Origin" << YAML::Value << rg2d.Origin;
 			out << YAML::EndMap;
 
 		}
@@ -357,6 +358,7 @@ namespace ENGINE
 					bc.Friction = bodyComponent["Friction"].as<float>();
 					bc.Restitution= bodyComponent["Restitution"].as<float>();
 					bc.RestitutionThreshold= bodyComponent["RestitutionThreshold"].as<float>();
+					bc.Origin = bodyComponent["Origin"].as<glm::vec2>();
 				}
 				//C#脚本组件
 				auto csComponent = entity["CScriptComponent"];

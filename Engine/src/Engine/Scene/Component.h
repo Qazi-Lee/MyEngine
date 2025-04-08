@@ -124,6 +124,8 @@ namespace ENGINE
 		//弹性系数阈值
 		float RestitutionThreshold = 1.0f;
 
+		//原点
+		glm::vec2 Origin;
 		//夹具
 		void* RuntimeFixture = nullptr;
 

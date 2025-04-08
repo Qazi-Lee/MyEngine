@@ -22,7 +22,7 @@ public class Derived : MonoBehavior
         float speed = 0.1f;
         if (Input.IsKeyDown(KeyCode.A))
         {
-          //  Console.WriteLine("A");
+           // Console.WriteLine("A");
            translation.x -= speed;
 
         }
@@ -33,15 +33,14 @@ public class Derived : MonoBehavior
         }
         if (Input.IsKeyDown(KeyCode.W))
         {
-          //  Console.WriteLine("W");
+           // Console.WriteLine("W");
             translation.y += speed;
         }
         if (Input.IsKeyDown(KeyCode.S))
         {
-          //  Console.WriteLine("S");
+           // Console.WriteLine("S");
             translation.y -= speed;
         }
-
         transform.Translation = translation;
     }
 }
