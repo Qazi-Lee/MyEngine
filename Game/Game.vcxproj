@@ -112,7 +112,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src;$(SolutionDir)Third\include;$(SolutionDir)ImGui;$(SolutionDir)glm;$(SolutionDir)Game;$(SolutionDir)Engine\vender;src;$(SolutionDir)yaml\include;$(SolutionDir)box2d\include;$(SolutionDir)Mono\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src;$(SolutionDir)Third\include;$(SolutionDir)ImGui;$(SolutionDir)glm;$(SolutionDir)Game;$(SolutionDir)Engine\vender;src;$(SolutionDir)yaml\include;$(SolutionDir)box2d\include;$(SolutionDir)Mono\include;$(SolutionDir)miniaudio</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

@@ -394,6 +394,91 @@ namespace ENGINE
 				ImGui::TreePop();
 			}
 		}
+
+		if (entity.HasComponent<AudioComponent>())
+		{
+			bool open = ImGui::TreeNodeEx((void*)typeid(AudioComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Audio");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
+			if (ImGui::Button("+"))
+			{
+				ImGui::OpenPopup("Audio");
+			}
+			if (open)
+			{
+				auto& ac = entity.GetComponent<AudioComponent>();
+				ImGui::Text("Music:");
+				std::string name = ac.MusicName;
+				ImGui::SameLine();
+				ImVec2 buttonsize = { ImGui::GetWindowWidth() - 100,20 };
+				if (ImGui::Button(name.c_str(), buttonsize))
+				{
+					if (!ac.Path.empty())
+					{
+						std::string command = "start " + ac.Path;
+						system(command.c_str());
+					}
+				}
+				//拖拽源
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path aspath = std::filesystem::path(path);
+						if (aspath.extension().string() == ".wav"|| aspath.extension().string() == ".mp3"||
+							aspath.extension().string() == ".ogg"|| aspath.extension().string() == ".flac")
+						{
+							ac.MusicName = aspath.filename().string();
+							ac.Path = aspath.string();
+							ac.loadAudio(aspath.string());
+						}
+						else
+						{
+							LOG_INFO("音频格式错误");
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+				//是否循环
+				{
+					bool primary = ac.loop;
+					if (ImGui::Checkbox("Loop", &primary))
+					{
+						ac.loop = ac.loop == true ? false : true;
+					}
+				}
+				//控制音量
+				{
+					ImGui::SliderFloat("Volume", &ac.Volume, 0.0f, 1.0f);
+					ac.setVolume();
+				}
+				
+				//控制是否停止
+				{
+					bool primary = ac.stop;
+					if (ImGui::Checkbox("Stop", &primary))
+					{
+						ac.stop = ac.stop == true ? false : true;
+						if (ac.stop)
+						{
+							ac.Stop();
+						}
+						else
+						{
+							ac.Play();
+						}
+					}
+				}
+				if (ImGui::BeginPopup("Audio", ImGuiPopupFlags_NoOpenOverExistingPopup))
+				{
+					if (ImGui::MenuItem("Delete Component"))
+					{
+						entity.RemoveComponent<AudioComponent>();
+					}
+					ImGui::EndPopup();
+				}
+				ImGui::TreePop();
+			}
+		}
 	}
 	void ScenePanels::AddComponent(Entity entity)
 	{
@@ -451,6 +536,13 @@ namespace ENGINE
 				if (ImGui::MenuItem("CScriptComponent"))
 				{
 					entity.AddComponent<CScriptComponent>();
+				}
+			}
+			if (!entity.HasComponent<AudioComponent>())
+			{
+				if (ImGui::MenuItem("AudioComponennt"))
+				{
+					entity.AddComponent<AudioComponent>();
 				}
 			}
 			ImGui::EndPopup();

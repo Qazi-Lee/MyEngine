@@ -126,7 +126,6 @@ namespace ENGINE
 				}
 
 			}
-
 			//Render2D
 			{
 				Camera* m_Camera = nullptr;
@@ -179,6 +178,16 @@ namespace ENGINE
 						}
 					}
 					Render2D::EndScene();
+				}
+			}
+			//Audio
+			{
+				auto view = m_Registry.view<AudioComponent>();
+				for (auto entity : view)
+				{
+					auto& ac = view.get<AudioComponent>(entity);
+					if(ac.loop)ac.Play();
+					
 				}
 			}
 		}
@@ -270,7 +279,7 @@ namespace ENGINE
 				CopyComponent<CameraComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<CScriptComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<Rigidbody2DComponent>(SrcRegistry, target, srcid, tarid);
-
+				CopyComponent<AudioComponent>(SrcRegistry, target, srcid, tarid);
 			}
 		);
 
@@ -345,10 +354,20 @@ namespace ENGINE
 
 	void Scene::OnRuntimeEnd()
 	{
+
 		if (m_b2World)
 		{
 			delete m_b2World;
 			m_b2World = nullptr;
+		}
+		//Audio
+		{
+			auto view = m_Registry.view<AudioComponent>();
+			for (auto entity : view)
+			{
+				auto& ac = view.get<AudioComponent>(entity);
+				ac.Stop();
+			}
 		}
 	}
 
@@ -405,7 +424,10 @@ namespace ENGINE
 	void Scene::OnComponentAdded<RenderCircleComponent>(RenderCircleComponent& component)
 	{
 	}
-
+	template<>
+	void Scene::OnComponentAdded<AudioComponent>(AudioComponent& component)
+	{
+	}
 	//Remove
 	template<typename T>
 	void Scene::OnComponentRemoved(T& conponent)

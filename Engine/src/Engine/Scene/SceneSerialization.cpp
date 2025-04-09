@@ -227,6 +227,18 @@ namespace ENGINE
 			out << YAML::Key << "Path" << YAML::Value << csc.Path.c_str();
 			out << YAML::EndMap;
 		}
+		//音频组件
+		if (entity.HasComponent<AudioComponent>())
+		{
+			out << YAML::Key << "AudioComponent" << YAML::BeginMap;
+			auto& ac = entity.GetComponent<AudioComponent>();
+			out << YAML::Key << "MusicName" << YAML::Value << ac.MusicName.c_str();
+			out << YAML::Key << "Path" << YAML::Value << ac.Path.c_str();
+			out << YAML::Key << "Volume" << YAML::Value << ac.Volume;
+			out << YAML::Key << "stop" << YAML::Value << ac.stop;
+			out << YAML::Key << "loop" << YAML::Value << ac.loop;
+			out << YAML::EndMap;
+		}
 		//TODO:等待其他组件添加
 		out << YAML::EndMap;
 		out << YAML::EndMap;
@@ -367,6 +379,18 @@ namespace ENGINE
 					auto& csc = DeserializationEntity.AddComponent<CScriptComponent>();
 					csc.ClassName = csComponent["ClassName"].as<std::string>();
 					csc.Path = csComponent["Path"].as<std::string>();
+				}
+				//音频组件
+				auto auComponent = entity["AudioComponent"];
+				if (auComponent)
+				{
+					auto& ac = DeserializationEntity.AddComponent<AudioComponent>();
+					ac.MusicName = auComponent["MusicName"].as<std::string>();
+					ac.Path = auComponent["Path"].as<std::string>();
+					ac.Volume = auComponent["Volume"].as<float>();
+					ac.stop = auComponent["stop"].as<bool>();
+					ac.loop = auComponent["loop"].as<bool>();
+					ac.loadAudio(ac.Path);
 				}
 			}
 		}

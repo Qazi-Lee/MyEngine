@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\Audio\AudioPlayer.h" />
     <ClInclude Include="src\Engine\Event\Event.h" />
     <ClInclude Include="src\Engine\Event\KeyEvent.h" />
     <ClInclude Include="src\Engine\Event\MouseEvent.h" />
@@ -73,6 +74,7 @@
     <ClInclude Include="vender\entt.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Audio\AudioPlayer.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Engine\ImGui\ImGuiLayer.cpp" />
     <ClCompile Include="src\Engine\Layer.cpp" />
@@ -130,6 +132,9 @@
     </ProjectReference>
     <ProjectReference Include="..\ImGui\ImGui.vcxproj">
       <Project>{a4a2cc2a-d3c8-4f54-bb89-71f23743906a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\miniaudio\miniaudio.vcxproj">
+      <Project>{9db15621-32d7-4451-a923-d90ee131b0d1}</Project>
     </ProjectReference>
     <ProjectReference Include="..\ScriptEngine\ScriptEngine.csproj">
       <Project>{ce8f8160-287d-459e-b402-67aa9d0cf302}</Project>
@@ -235,7 +240,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>ENGINE_PLATFORM_WINDOWS;ENGINE_BUILD_DLL;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src;$(SolutionDir)glad;$(SolutionDir)ImGui;$(SolutionDir)glm;$(SolutionDir)stb_image;$(SolutionDir)Third\include;D:\MyEngine\MyEngine\GLFW\include;$(SolutionDir)Engine\vender;$(SolutionDir)yaml\include;$(SolutionDir)box2d\include;C:\VulkanSDK\1.3.250.1\Include;$(SolutionDir)Mono\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\src;$(SolutionDir)glad;$(SolutionDir)ImGui;$(SolutionDir)glm;$(SolutionDir)stb_image;$(SolutionDir)Third\include;D:\MyEngine\MyEngine\GLFW\include;$(SolutionDir)Engine\vender;$(SolutionDir)yaml\include;$(SolutionDir)box2d\include;C:\VulkanSDK\1.3.250.1\Include;$(SolutionDir)Mono\include;$(SolutionDir)miniaudio</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp17</LanguageStandard>

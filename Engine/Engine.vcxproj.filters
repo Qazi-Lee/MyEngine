@@ -171,6 +171,9 @@
     <ClInclude Include="src\Engine\Scene\SceneManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\Audio\AudioPlayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Application.cpp">
@@ -285,6 +288,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Engine\Scene\SceneManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Audio\AudioPlayer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

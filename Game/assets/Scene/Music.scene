@@ -1,0 +1,15 @@
+Scene: 3861974021
+Entities:
+  - Entity:
+      TagComponent:
+        Tag: Music
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      AudioComponent:
+        MusicName: ding.flac
+        Path: assets\Audio\ding.flac
+        Volume: 0.5
+        stop: true
+        loop: true

@@ -9,6 +9,9 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
+
+#include"Engine/Audio/AudioPlayer.h"
+
 namespace ENGINE
 {
 	struct TagComponent
@@ -105,6 +108,37 @@ namespace ENGINE
 
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
+	};
+	struct AudioComponent 
+	{
+		std::string MusicName;
+		std::string Path;		 
+		float Volume=0.5f;
+		bool stop = true;
+		bool loop = false;
+		Ref<AudioPlayer> player=std::make_shared<AudioPlayer>();
+		void Play()
+		{
+			player->Play();
+		}
+		void Stop()
+		{
+			player->Stop();
+		}
+		void loadAudio(const std::string& filePath)
+		{
+			player->loadAudio(filePath);
+			if (stop)Stop();
+			else Play();
+			setVolume();
+		}
+		void setVolume()
+		{
+			player->setVolume(Volume);
+		}
+
+		AudioComponent()=default;
+		AudioComponent(const AudioComponent&) = default;
 	};
 
 }

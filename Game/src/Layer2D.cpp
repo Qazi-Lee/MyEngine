@@ -261,6 +261,7 @@ void Layer2D::OnImGuiRender()
                 OnSceneStop();
             m_SceneManager.SetScene(i);
             m_ActiveScene = m_SceneManager.GetScene();
+            m_ScenePanels->SetScene(m_ActiveScene);
         }
         if (isSelected)
         {
