@@ -257,6 +257,8 @@ void Layer2D::OnImGuiRender()
         }
         if (ImGui::Button("!", ImVec2(ImGui::GetWindowSize().x / 7, 20)))
         {
+            if (m_SceneState != SceneState::Edit)
+                OnSceneStop();
             m_SceneManager.SetScene(i);
             m_ActiveScene = m_SceneManager.GetScene();
         }

@@ -45,7 +45,6 @@ namespace ENGINE
 		RenderQuadComponent(const RenderQuadComponent& other) = default;
 		operator const glm::vec4& () { return color; }
 	};
-
 	struct RenderCircleComponent
 	{
 		glm::vec4 color = glm::vec4(1.0f);
@@ -66,31 +65,6 @@ namespace ENGINE
 		CameraComponent(const CameraComponent& other) = default;
 
 	};
-
-	struct ScriptComponent
-	{
-		std::string ClassName;
-
-		ScriptComponent() = default;
-		ScriptComponent(const ScriptComponent&) = default;
-	};
-
-	struct NativeScriptComponent
-	{
-		//绑定一个脚本实体
-		ScriptableEntity* Instance = nullptr;
-
-		ScriptableEntity*(*InitInstanceFunc)();//初始化指针
-		void(*DestroyInstanceFunc)(NativeScriptComponent*);//销毁指针
-
-		template<typename T>
-		void Bind()
-		{
-			InitInstanceFunc = []() {return static_cast<ScriptableEntity*>(new T()); };
-			DestroyInstanceFunc = [](NativeScriptComponent*nsc) {delete nsc->Instance; nsc->Instance = nullptr; };
-		}
-	};
-
 	struct CScriptComponent
 	{
 		//类名称
@@ -132,6 +106,5 @@ namespace ENGINE
 		Rigidbody2DComponent() = default;
 		Rigidbody2DComponent(const Rigidbody2DComponent&) = default;
 	};
-
 
 }

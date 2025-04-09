@@ -268,8 +268,6 @@ namespace ENGINE
 				CopyComponent<RenderQuadComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<RenderCircleComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<CameraComponent>(SrcRegistry, target, srcid, tarid);
-				CopyComponent<ScriptComponent>(SrcRegistry, target, srcid, tarid);
-				CopyComponent<NativeScriptComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<CScriptComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<Rigidbody2DComponent>(SrcRegistry, target, srcid, tarid);
 
@@ -347,8 +345,11 @@ namespace ENGINE
 
 	void Scene::OnRuntimeEnd()
 	{
-		delete m_b2World;
-		m_b2World = nullptr;
+		if (m_b2World)
+		{
+			delete m_b2World;
+			m_b2World = nullptr;
+		}
 	}
 
 	void Scene::ShowEntitySize()
@@ -388,11 +389,6 @@ namespace ENGINE
 	}
 	template<>
 	void Scene::OnComponentAdded<RenderQuadComponent>(RenderQuadComponent& component)
-	{
-
-	}
-	template<>
-	void Scene::OnComponentAdded<NativeScriptComponent>(NativeScriptComponent& component)
 	{
 
 	}
