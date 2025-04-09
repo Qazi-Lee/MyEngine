@@ -91,12 +91,16 @@ namespace ENGINE
 			}
 			//Physic2D
 			{
-				int32 velocityIterations = 6;   // 速度约束迭代次数
-				int32 positionIterations = 2;   // 位置约束迭代次数		
-				m_b2World->Step(t.GetSecond(), velocityIterations, positionIterations);
 				auto view = m_Registry.view<TransformComponent, Rigidbody2DComponent>();
+				if (view)
+				{
+					int32 velocityIterations = 6;   // 速度约束迭代次数
+					int32 positionIterations = 2;   // 位置约束迭代次数		
+					if(m_b2World)m_b2World->Step(t.GetSecond(), velocityIterations, positionIterations);
+				}
 				for(auto entity:view)
 				{
+
 					auto& trans = view.get<TransformComponent>(entity);
 					auto& rgd2d =view.get<Rigidbody2DComponent>(entity);
 
@@ -277,13 +281,16 @@ namespace ENGINE
 
 	void Scene::OnRuntimeStart()
 	{
-		////输入重力创建世界
-		b2Vec2 gravity(0.0f, -9.8f);
-		m_b2World = new b2World(gravity);
 		//创建body
 		if (!m_Registry.empty())
 		{
 			auto view = m_Registry.view<TransformComponent,Rigidbody2DComponent>();
+			if (view)
+			{
+				////输入重力创建世界
+				b2Vec2 gravity(0.0f, -9.8f);
+				m_b2World = new b2World(gravity);
+			}
 			for (auto entity : view)
 			{
 				auto& trans =view.get<TransformComponent>(entity);

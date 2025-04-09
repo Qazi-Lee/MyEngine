@@ -286,7 +286,21 @@ void Layer2D::OnImGuiRender()
     }
     if (ImGui::Button("Load now Scene", ImVec2(ImGui::GetWindowSize().x, 20)))
     {
-
+        if (m_SceneState != SceneState::Edit)
+            OnSceneStop();
+        //传入参数说明：前面字符表示传入参数类型名字以及类型定义 \0之后的参数进行筛选
+        std::filesystem::path filepath = FileDialogs::OpenFile("Engine Scene (*.scene) \0*.scene\0");
+        if (!filepath.empty())
+        {
+            if (filepath.extension().string() != ".scene")
+            {
+                LOG_CORE_ERROR("Could not load {0} - not a scene file", filepath.filename().string());
+            }
+            else
+            {
+                m_SceneManager.AddScene(filepath);
+            }
+        }
     }
     ImGui::End();
 
