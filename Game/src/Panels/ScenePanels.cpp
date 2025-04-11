@@ -99,24 +99,26 @@ namespace ENGINE
 			ImGui::InputText("Tag", buffer, sizeof(buffer));
 			tag = std::string(buffer);
 			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
+			//组件移除禁用
 			if (ImGui::Button("+"))
 			{
 				ImGui::OpenPopup("Tag");
 			}
-			if (ImGui::BeginPopup("Tag",ImGuiPopupFlags_NoOpenOverExistingPopup))
-			{
-				if (ImGui::MenuItem("Delete Component"))
-				{
-					entity.RemoveComponent<TagComponent>();
-				}
-				ImGui::EndPopup();
-			}
+			//if (ImGui::BeginPopup("Tag",ImGuiPopupFlags_NoOpenOverExistingPopup))
+			//{
+			//	if (ImGui::MenuItem("Delete Component"))
+			//	{
+			//		entity.RemoveComponent<TagComponent>();
+			//	}
+			//	ImGui::EndPopup();
+			//}
 		}
 
 		if (entity.HasComponent<TransformComponent>())
 		{
 			bool open = ImGui::TreeNodeEx((void*)typeid(TransformComponent).hash_code(), flag, "Transform");
 			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
+			//组件移除禁用
 			if (ImGui::Button("+"))
 			{
 				ImGui::OpenPopup("Transform");
@@ -129,14 +131,14 @@ namespace ENGINE
 				ImGui::DragFloat3("Rotation", glm::value_ptr(rotation), 0.1f);
 				auto& scale = entity.GetComponent<TransformComponent>().Scale;
 				ImGui::DragFloat3("Scale", glm::value_ptr(scale), 0.1f);
-				if (ImGui::BeginPopup("Transform", ImGuiPopupFlags_NoOpenOverExistingPopup))
-				{
-					if (ImGui::MenuItem("Delete Component"))
-					{
-						entity.RemoveComponent<TransformComponent>();
-					}
-					ImGui::EndPopup();
-				}
+				//if (ImGui::BeginPopup("Transform", ImGuiPopupFlags_NoOpenOverExistingPopup))
+				//{
+				//	if (ImGui::MenuItem("Delete Component"))
+				//	{
+				//		entity.RemoveComponent<TransformComponent>();
+				//	}
+				//	ImGui::EndPopup();
+				//}
 				ImGui::TreePop();
 			}
 		}

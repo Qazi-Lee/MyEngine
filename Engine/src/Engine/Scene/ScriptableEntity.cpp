@@ -39,6 +39,10 @@ namespace ENGINE
 
 		baseClassName = "MonoBehavior";
 	}
+	MonoImage* CLRLoader::GetDepImage() const
+	{
+		return depimage;
+	}
 	std::vector<MonoClass*>CLRLoader::FindDerivedClasses()
 	{
 		std::vector<MonoClass*> result;
@@ -72,6 +76,7 @@ namespace ENGINE
 		:loader(assemblyPath, baseClass), engine(scene)
 	{
 		engine.Register();
+		engine.RegisterComponents(loader.GetDepImage());
 		auto classes= loader.FindDerivedClasses();
 		for (auto klass : classes)
 		{

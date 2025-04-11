@@ -20,6 +20,7 @@ namespace ENGINE {
 			mono_domain_free(domain, 0);
 			//std::cout << "~CLRLoader" << std::endl;
 		}
+		MonoImage* GetDepImage()const;
 		// 发现所有派生类
 		std::vector<MonoClass*> FindDerivedClasses();
         MonoDomain* domain;
