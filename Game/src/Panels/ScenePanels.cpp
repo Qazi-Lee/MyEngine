@@ -481,6 +481,127 @@ namespace ENGINE
 				ImGui::TreePop();
 			}
 		}
+
+		if (entity.HasComponent<ButtonComponent>())
+		{
+			bool open = ImGui::TreeNodeEx((void*)typeid(ButtonComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Button");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
+			if (ImGui::Button("+"))
+			{
+				ImGui::OpenPopup("Button");
+			}
+			if (open)
+			{
+				auto& bc = entity.GetComponent<ButtonComponent>();
+				ImGui::Text("Font:");
+				ImGui::SameLine();
+				ImVec2 buttonsize = { ImGui::GetWindowWidth() - 100,20 };
+				std::filesystem::path fp = bc.Path;
+				std::string Path = fp.filename().string();
+				ImGui::Button(Path.c_str(), buttonsize);
+				//拖拽源
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path bcpath = std::filesystem::path(path);
+						if (bcpath.extension().string() == ".ttf" )
+						{
+							bc.Path = bcpath.string();
+						}
+						else
+						{
+							LOG_INFO("文字格式错误");
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				//文本框
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				strcpy_s(buffer, bc.Text.c_str());
+				if(ImGui::InputText("Text", buffer, sizeof(buffer)))
+				{
+					if (ImGui::IsItemEdited())
+					{
+						bc.Text = std::string(buffer);
+					}
+				}
+				//颜色控制
+				ImGui::ColorEdit4("BackColor", glm::value_ptr(bc.BackColor));
+				ImGui::ColorEdit4("TextColor", glm::value_ptr(bc.TextColor));
+				if (ImGui::BeginPopup("Button", ImGuiPopupFlags_NoOpenOverExistingPopup))
+				{
+					if (ImGui::MenuItem("Delete Component"))
+					{
+						entity.RemoveComponent<ButtonComponent>();
+					}
+					ImGui::EndPopup();
+				}
+				ImGui::TreePop();
+			}
+		}
+
+		if (entity.HasComponent<LableComponent>())
+		{
+			bool open = ImGui::TreeNodeEx((void*)typeid(LableComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Lable");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 50.0f);
+			if (ImGui::Button("+"))
+			{
+				ImGui::OpenPopup("Lable");
+			}
+			if (open)
+			{
+				auto& bc = entity.GetComponent<LableComponent>();
+				ImGui::Text("Font:");
+				ImGui::SameLine();
+				ImVec2 buttonsize = { ImGui::GetWindowWidth() - 100,20 };
+				std::filesystem::path fp = bc.Path;
+				std::string Path = fp.filename().string();
+				ImGui::Button(Path.c_str(), buttonsize);
+				//拖拽源
+				if (ImGui::BeginDragDropTarget()) {
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path bcpath = std::filesystem::path(path);
+						if (bcpath.extension().string() == ".ttf")
+						{
+							bc.Path = bcpath.string();
+						}
+						else
+						{
+							LOG_INFO("文字格式错误");
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				//文本框
+				char buffer[256];
+				memset(buffer, 0, sizeof(buffer));
+				strcpy_s(buffer, bc.Text.c_str());
+				if (ImGui::InputText("Text", buffer, sizeof(buffer)))
+				{
+					if (ImGui::IsItemEdited())
+					{
+						bc.Text = std::string(buffer);
+					}
+				}
+				//颜色控制
+				ImGui::ColorEdit4("TextColor", glm::value_ptr(bc.TextColor));
+				if (ImGui::BeginPopup("Button", ImGuiPopupFlags_NoOpenOverExistingPopup))
+				{
+					if (ImGui::MenuItem("Delete Component"))
+					{
+						entity.RemoveComponent<LableComponent>();
+					}
+					ImGui::EndPopup();
+				}
+				ImGui::TreePop();
+			}
+		}
 	}
 	void ScenePanels::AddComponent(Entity entity)
 	{
@@ -502,7 +623,8 @@ namespace ENGINE
 					entity.AddComponent<TransformComponent>();
 				}
 			}
-			if (!entity.HasComponent<RenderQuadComponent>()&& !entity.HasComponent<RenderCircleComponent>())
+			if (!entity.HasComponent<RenderQuadComponent>()&& !entity.HasComponent<RenderCircleComponent>()
+				&& !entity.HasComponent<ButtonComponent>() && !entity.HasComponent<LableComponent>())
 			{
 
 				if (ImGui::MenuItem("RenderQuadComponent"))
@@ -513,7 +635,14 @@ namespace ENGINE
 				{
 					entity.AddComponent<RenderCircleComponent>();
 				}
-
+				if (ImGui::MenuItem("ButtonComponent"))
+				{
+					entity.AddComponent<ButtonComponent>();
+				}
+				if (ImGui::MenuItem("LableComponent"))
+				{
+					entity.AddComponent<LableComponent>();
+				}
 			}
 			if (!entity.HasComponent<CameraComponent>())
 			{

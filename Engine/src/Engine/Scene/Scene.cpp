@@ -198,6 +198,26 @@ namespace ENGINE
 		if(!m_Registry.empty())
 		{
 			Render2D::BeginScene(camera);
+			//按钮
+			{
+				auto view = m_Registry.view<TransformComponent, ButtonComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, bc] = view.get<TransformComponent, ButtonComponent>(entity);
+
+					Render2D::DrawButton(transform.GetTransform(), bc.Path, bc.Text, bc.TextColor,bc.BackColor,(int)entity);
+				}
+			}
+			//标签
+			{
+				auto view = m_Registry.view<TransformComponent, LableComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, bc] = view.get<TransformComponent, LableComponent>(entity);
+
+					Render2D::DrawLable(transform.GetTransform(), bc.Path, bc.Text, bc.TextColor,(int)entity);
+				}
+			}
 			//矩形
 			{
 				
@@ -212,8 +232,7 @@ namespace ENGINE
 					}
 					else
 					{
-						//Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
-						Render2D::DrawText_(transform.GetTransform());
+						Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
 					}
 				}
 			}
@@ -233,6 +252,7 @@ namespace ENGINE
 					}
 				}
 			}
+
 			Render2D::EndScene();
 		}
 	}
@@ -283,6 +303,9 @@ namespace ENGINE
 				CopyComponent<CScriptComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<Rigidbody2DComponent>(SrcRegistry, target, srcid, tarid);
 				CopyComponent<AudioComponent>(SrcRegistry, target, srcid, tarid);
+
+				CopyComponent<ButtonComponent>(SrcRegistry, target, srcid, tarid);
+				CopyComponent<LableComponent>(SrcRegistry, target, srcid, tarid);
 			}
 		);
 
@@ -430,6 +453,16 @@ namespace ENGINE
 	template<>
 	void Scene::OnComponentAdded<AudioComponent>(AudioComponent& component)
 	{
+	}
+	template<>
+	void Scene::OnComponentAdded<ButtonComponent>(ButtonComponent& component)
+	{
+
+	}
+	template<>
+	void Scene::OnComponentAdded<LableComponent>(LableComponent& component)
+	{
+
 	}
 	//Remove
 	template<typename T>

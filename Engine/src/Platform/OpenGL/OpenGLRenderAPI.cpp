@@ -46,4 +46,12 @@ namespace ENGINE
 	{
 		glLineWidth(width);
 	}
+	void OpenGLRenderAPI::EnableDepth() const
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
+	void OpenGLRenderAPI::DisableDepth() const
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
 }

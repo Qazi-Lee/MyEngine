@@ -142,4 +142,25 @@ namespace ENGINE
 	};
 
 	//UI组件
+
+	struct LableComponent
+	{
+		std::string Path;
+		std::string Text;
+		glm::vec4 TextColor = glm::vec4(1.0f);
+		LableComponent() = default;
+		LableComponent(const LableComponent&) = default;
+	};
+
+	struct ButtonComponent
+	{
+		std::string Path;
+		std::string Text;
+		glm::vec4 TextColor=glm::vec4(1.0f);
+		glm::vec4 BackColor=glm::vec4(0.2f,0.2f,0.2f,1.0f);
+		ButtonComponent() = default;
+		ButtonComponent(const ButtonComponent&) = default;
+	};
+
+
 }

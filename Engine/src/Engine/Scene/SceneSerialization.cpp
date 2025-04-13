@@ -239,6 +239,27 @@ namespace ENGINE
 			out << YAML::Key << "loop" << YAML::Value << ac.loop;
 			out << YAML::EndMap;
 		}
+		//标签组件
+		if (entity.HasComponent<LableComponent>())
+		{
+			out << YAML::Key << "LableComponent" << YAML::BeginMap;
+			auto& lc = entity.GetComponent<LableComponent>();
+			out << YAML::Key << "Path" << YAML::Value << lc.Path.c_str();
+			out << YAML::Key << "Text" << YAML::Value << lc.Text.c_str();
+			out << YAML::Key << "TextColor" << YAML::Value << lc.TextColor;
+			out << YAML::EndMap;
+		}
+		//按钮组件
+		if (entity.HasComponent<ButtonComponent>())
+		{
+			out << YAML::Key << "ButtonComponent" << YAML::BeginMap;
+			auto& bc = entity.GetComponent<ButtonComponent>();
+			out << YAML::Key << "Path" << YAML::Value << bc.Path.c_str();
+			out << YAML::Key << "Text" << YAML::Value << bc.Text.c_str();
+			out << YAML::Key << "BackColor" << YAML::Value << bc.BackColor;
+			out << YAML::Key << "TextColor" << YAML::Value << bc.TextColor;
+			out << YAML::EndMap;
+		}
 		//TODO:等待其他组件添加
 		out << YAML::EndMap;
 		out << YAML::EndMap;
@@ -391,6 +412,25 @@ namespace ENGINE
 					ac.stop = auComponent["stop"].as<bool>();
 					ac.loop = auComponent["loop"].as<bool>();
 					ac.loadAudio(ac.Path);
+				}
+				//标签组件
+				auto laComponent = entity["LableComponent"];
+				if (laComponent)
+				{
+					auto& lc = DeserializationEntity.AddComponent<LableComponent>();
+					lc.Path = laComponent["Path"].as<std::string>();
+					lc.Text = laComponent["Text"].as<std::string>();
+					lc.TextColor = laComponent["TextColor"].as<glm::vec4>();
+				}
+				//按钮组件
+				auto bComponent = entity["ButtonComponent"];
+				if (bComponent)
+				{
+					auto& bc = DeserializationEntity.AddComponent<ButtonComponent>();
+					bc.Path = bComponent["Path"].as<std::string>();
+					bc.Text = bComponent["Text"].as<std::string>();
+					bc.BackColor = bComponent["BackColor"].as<glm::vec4>();
+					bc.TextColor = bComponent["TextColor"].as<glm::vec4>();
 				}
 			}
 		}

@@ -17,6 +17,8 @@ namespace ENGINE
 		virtual void DrawElement(const std::shared_ptr<VertexArray>& vertexarray,const int&count=0)const=0;
 		virtual void DrawLine(const std::shared_ptr<VertexArray>& vertexarray, const int& count = 0)const = 0;
 		virtual void SetLineWidth(float width)const =0;
+		virtual void EnableDepth()const = 0;
+		virtual void DisableDepth()const = 0;
 		static API GetAPI() { return m_API; }
 	private:
 		static API m_API;
@@ -32,6 +34,8 @@ namespace ENGINE
 		inline static void DrawElement(const std::shared_ptr<VertexArray>& vertexarray,const int&count=0) { m_RenderAPI->DrawElement(vertexarray,count); }
 		inline static void DrawLine(const std::shared_ptr<VertexArray>& vertexarray, const int& count = 0) { m_RenderAPI->DrawLine(vertexarray, count); }
 		inline static void SetLineWidth(float width) { m_RenderAPI->SetLineWidth(width); }
+		inline static void EnableDepth() { m_RenderAPI->EnableDepth(); }
+		inline static void DisableDepth() { m_RenderAPI->DisableDepth(); }
 	private:
 		static RenderAPI* m_RenderAPI;
 	};

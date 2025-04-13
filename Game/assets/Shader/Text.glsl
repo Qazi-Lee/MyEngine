@@ -24,5 +24,5 @@ void main()
 {
     float distance = texture(u_Texture[31],v_TextureCoord).r;
     float alpha = smoothstep(0.5 - 0.1, 0.5 + 0.1, distance);
-    color = vec4(1.0f,1.0f,1.0f,alpha);
+    color = vec4(v_Color.r,v_Color.g,v_Color.b,alpha);
 }

@@ -1,0 +1,25 @@
+Scene: 3861974021
+Entities:
+  - Entity:
+      TagComponent:
+        Tag: Empty Entity
+      TransformComponent:
+        Translate: [-2.0999999, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      LableComponent:
+        Path: ""
+        Text: lable
+        TextColor: [1, 0.882352948, 0.882352948, 1]
+  - Entity:
+      TagComponent:
+        Tag: Empty Entity
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      ButtonComponent:
+        Path: ""
+        Text: button
+        BackColor: [0.990196049, 0, 0, 1]
+        TextColor: [1, 1, 1, 1]

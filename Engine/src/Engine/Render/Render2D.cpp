@@ -4,6 +4,7 @@
 #include"Engine/Render/VertexArray.h"
 #include"Engine/Render/Shader.h"
 
+#include"Engine/Math/math.h"
 
 namespace ENGINE
 {
@@ -316,7 +317,7 @@ namespace ENGINE
 			m_Data.m_stats.DrawCalls++;
 
 		}
-	//	文字
+		//	文字
 		if (m_Data.TextIndexCount)
 		{
 			m_Data.TextVertexDataPtr = m_Data.TextVertexDataBase;
@@ -334,7 +335,9 @@ namespace ENGINE
 					m_Data.TextVertexBuffer->SetData((void*)m_Data.TextVertexDataPtr, datasize);
 					m_Data.TextVertexDataPtr = curr;
 					RenderTextLists[i][j]->Bind(31);
+					RenderCommand::DisableDepth();
 					RenderCommand::DrawElement(m_Data.TextVertexArray, 6);
+					RenderCommand::EnableDepth();
 				}
 			}
 
@@ -342,78 +345,123 @@ namespace ENGINE
 		}
 	}
 
-	void Render2D::DrawText_(const glm::mat4& transform)
+	void Render2D::DrawButton(const glm::mat4& transform, std::string Path, std::string Text, glm::vec4 color, glm::vec4 backcolor,int entityID)
 	{
-		std::vector<Ref<Texture2D>>Textures;
-		//由face得到对应的
-		std::string Text="hellow";
-		FT_Library ft;
-		if (FT_Init_FreeType(&ft)) {
-			std::cerr << "FreeType 初始化失败" << std::endl;
-			return ;
-		}
-		FT_Face g_Face;
-		if (FT_New_Face(ft, "assets/Fonts/Bungee-Regular.ttf", 0, &g_Face)) {
-			std::cerr << "加载字体失败，请检查路径" << std::endl;
-			return ;
-		}
-		if (FT_Error error = FT_Set_Pixel_Sizes(g_Face, 0, 24))
+		if (!Text.empty())
 		{
-			std::cout << g_Face->num_fixed_sizes << std::endl;
-		}
-		float x = -10, y = 0, scale = 0.1f;
-		constexpr glm::vec2 TextureCoord[4] = {
-				{ 0.0f,0.0f },
-				{ 1.0f,0.0f },
-				{ 1.0f,1.0f },
-				{ 0.0f,1.0f }
-		};
-		glm::vec4 Position[4];
-		glm::vec4 color(0.8f);
-		for (char ch : Text)
-		{
-			FT_ULong charcode = static_cast<FT_ULong>(ch);
-			FT_UInt glyph_index = FT_Get_Char_Index(g_Face, charcode);
-			if (glyph_index == 0) {
-				std::wcerr << L"字体中不包含字符: " << wchar_t(charcode) << std::endl;
-			}		
-			if (!FT_Load_Char(g_Face, charcode, FT_LOAD_RENDER | FT_LOAD_TARGET_LIGHT))
+			if (Path.empty())
 			{
+				Path = "assets/Fonts/Bungee-Regular.ttf";
 			}
-			Ref<Texture2D> texture;
-			uint32_t bw = g_Face->glyph->bitmap.width;
-			uint32_t br = g_Face->glyph->bitmap.rows;
-			void* data = g_Face->glyph->bitmap.buffer;
-			texture = Texture2D::Create(bw, br,data);
+			std::vector<Ref<Texture2D>>Textures;
+			//由face得到对应的
+			FT_Library ft;
+			if (FT_Init_FreeType(&ft)) {
+				std::cerr << "FreeType 初始化失败" << std::endl;
+				return;
+			}
+			FT_Face g_Face;
+			if (FT_New_Face(ft, Path.c_str(), 0, &g_Face)) {
+				std::cerr << "加载字体失败，请检查路径" << std::endl;
+				return;
+			}
+			if (FT_Error error = FT_Set_Pixel_Sizes(g_Face, 0, 24))
+			{
+				std::cout << g_Face->num_fixed_sizes << std::endl;
+			}
+			float width=0.0f, height=0.0f;
+			
+			constexpr glm::vec2 TextureCoord[4] = {
+					{ 0.0f,0.0f },
+					{ 1.0f,0.0f },
+					{ 1.0f,1.0f },
+					{ 0.0f,1.0f }
+			};
+			glm::vec4 Position[4];
+			glm::vec3 position, rotation, scale;
+			DecomposeTransform(transform, position, rotation, scale);
+			float ratio = 0.02;
+			float TextX = position.x;
+			float TextY = position.y;
+			float QuadX = position.x;
+			float QuadY = position.y;
+			for (char ch : Text)
+			{
+				FT_ULong charcode = static_cast<FT_ULong>(ch);
+				FT_UInt glyph_index = FT_Get_Char_Index(g_Face, charcode);
+				if (glyph_index == 0) {
+					std::wcerr << L"字体中不包含字符: " << wchar_t(charcode) << std::endl;
+				}
+				if (!FT_Load_Char(g_Face, charcode, FT_LOAD_RENDER | FT_LOAD_TARGET_LIGHT))
+				{
+				}
+				Ref<Texture2D> texture;
+				uint32_t bw = g_Face->glyph->bitmap.width;
+				uint32_t br = g_Face->glyph->bitmap.rows;
+				void* data = g_Face->glyph->bitmap.buffer;
+				texture = Texture2D::Create(bw, br, data);
 
-			Character character;
-			character.size = { g_Face->glyph->bitmap.width,g_Face->glyph->bitmap.rows };
-			character.bearing = { g_Face->glyph->bitmap_left ,g_Face->glyph->bitmap_top };
-			character.advance = static_cast<uint32_t>(g_Face->glyph->advance.x);
+				Character character;
+				character.size = { g_Face->glyph->bitmap.width,g_Face->glyph->bitmap.rows };
+				character.bearing = { g_Face->glyph->bitmap_left ,g_Face->glyph->bitmap_top };
+				character.advance = static_cast<uint32_t>(g_Face->glyph->advance.x);
+				float xpos = TextX + character.bearing.x * ratio;
+				float ypos = position.y - (character.size.y - character.bearing.y) * ratio;
+				float w = character.size.x * ratio;
+				float h = character.size.y * ratio;
+				height = std::max(height,h);
+				QuadY = std::min(QuadY, ypos);
+				Position[0] = { xpos, ypos + h,0.0f,1.0f };
+				Position[1] = { xpos + w, ypos + h,0.0f,1.0f };
+				Position[2] = { xpos + w,ypos,0.0f,1.0f };
+				Position[3] = { xpos,ypos,0.0f,1.0f };
+				for (int i = 0; i < 4; i++)
+				{
+					m_Data.TextVertexDataPtr->position = transform * Position[i];
+					m_Data.TextVertexDataPtr->texturecoord = TextureCoord[i];
+					m_Data.TextVertexDataPtr->color = color;
+					m_Data.TextVertexDataPtr++;
+				}
+				TextX += (character.advance >> 6) * ratio;
+				width += (character.advance >> 6) * ratio;
+				Textures.push_back(texture);
+				m_Data.TextIndexCount++;
+			}
 
-			float xpos = x + character.bearing.x* scale;
-			float ypos = y - (character.size.y - character.bearing.y) *scale;
-			float w = character.size.x * scale;
-			float h = character.size.y * scale;
+			//绘制背景
+			{	
+				Position[0] = { QuadX - 0.1 * width,QuadY + height,0.0f,1.0f };
+				Position[1] = { QuadX + 1.1 * width,QuadY + height,0.0f,1.0f };
+				Position[2] = { QuadX + 1.1 * width,QuadY,0.0f,1.0f };
+				Position[3] = { QuadX - 0.1 * width,QuadY,0.0f,1.0f };
+				float textureindex = 0.0f;
 
-			Position[0] = { xpos, ypos + h,0.0f,1.0f };
-			Position[1] = { xpos + w, ypos + h,0.0f,1.0f };
-			Position[2] = { xpos + w,ypos,0.0f,1.0f };
-			Position[3] = { xpos,ypos,0.0f,1.0f };
-			 for (int i = 0; i < 4; i++)
-			 {
-				 m_Data.TextVertexDataPtr->position =transform*Position[i];
-				 m_Data.TextVertexDataPtr->texturecoord = TextureCoord[i];
-				 m_Data.TextVertexDataPtr->color = color;
-				 m_Data.TextVertexDataPtr++;
-			 }
- 			 x += (character.advance >> 6)*scale;
-			 Textures.push_back(texture);
-			 m_Data.TextIndexCount++;
+				if (m_Data.QuadIndexCount >= RenderData::MAXINDEX)
+				{
+					NextBatch();
+				}
+				for (int i = 0; i < 4; i++)
+				{
+					m_Data.QuadVertexDataPtr->position = transform * Position[i];
+					m_Data.QuadVertexDataPtr->texturecoord = TextureCoord[i];
+					m_Data.QuadVertexDataPtr->textureindex = textureindex;
+					m_Data.QuadVertexDataPtr->color = backcolor;
+					m_Data.QuadVertexDataPtr->EntityID = entityID;
+					m_Data.QuadVertexDataPtr++;
+				}
+				m_Data.QuadIndexCount += 6;
+				m_Data.m_stats.QuadCount++; 
+			}
+
+			RenderTextLists.push_back(Textures);
+			FT_Done_Face(g_Face);
+			FT_Done_FreeType(ft);
 		}
-		RenderTextLists.push_back(Textures);
-		FT_Done_Face(g_Face);
-		FT_Done_FreeType(ft);
+	}
+
+	void Render2D::DrawLable(const glm::mat4& transform, std::string Path, std::string Text, glm::vec4 color, int entityID)
+	{
+		DrawButton(transform, Path, Text, color, glm::vec4(0.0f), entityID);
 	}
 
 	void Render2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, const float& rotation)

@@ -34,6 +34,7 @@
     <ClInclude Include="src\Engine\Application.h" />
     <ClInclude Include="src\Engine\Core.h" />
     <ClInclude Include="src\Engine\EntryPoint.h" />
+    <ClInclude Include="src\Engine\Math\math.h" />
     <ClInclude Include="src\Engine\MouseButton.h" />
     <ClInclude Include="src\Engine\Render\Buffer.h" />
     <ClInclude Include="src\Engine\Render\Camera.h" />

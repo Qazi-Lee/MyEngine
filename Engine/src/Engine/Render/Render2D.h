@@ -23,7 +23,8 @@ namespace ENGINE
 		static void EndScene();
 		static void Flush();
 
-		static void DrawText_(const glm::mat4& transform);
+		static void DrawButton(const glm::mat4& transform, std::string Path, std::string Text, glm::vec4 color, glm::vec4 backcolor,int entityID=-1);
+		static void DrawLable(const glm::mat4& transform, std::string Path, std::string Text, glm::vec4 color, int entityID = -1);
 
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color,const float&rotation=0.0f);
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color,const float&rotation=0.0f);

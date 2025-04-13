@@ -13,5 +13,7 @@ namespace ENGINE
 		 void DrawElement(const Ref<VertexArray>& vertexarray,const int& count=0)const override;
 		 void DrawLine(const Ref<VertexArray>& vertexarray, const int& count = 0)const override;
 		 void SetLineWidth(float width)const override;
+		 void EnableDepth()const override;
+		 void DisableDepth()const override;
 	};
 }
