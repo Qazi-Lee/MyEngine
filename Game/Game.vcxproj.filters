@@ -33,6 +33,7 @@
     <None Include="assets\Shader\Render2D_Circle.glsl" />
     <None Include="assets\Shader\Render2D_Line.glsl" />
     <None Include="assets\C#\Class1.cs" />
+    <None Include="assets\Shader\Text.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="head\Layer2D.h">

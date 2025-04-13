@@ -200,6 +200,7 @@ namespace ENGINE
 			Render2D::BeginScene(camera);
 			//矩形
 			{
+				
 				auto view = m_Registry.view<TransformComponent, RenderQuadComponent>();
 				for (auto entity : view)
 				{
@@ -207,10 +208,12 @@ namespace ENGINE
 					if (rc.Texture.get())
 					{
 						Render2D::DrawQuad(transform.GetTransform(), rc.color, rc.Texture, (int)entity);
+						
 					}
 					else
 					{
-						Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
+						//Render2D::DrawQuad(transform.GetTransform(), rc.color, (int)entity);
+						Render2D::DrawText_(transform.GetTransform());
 					}
 				}
 			}

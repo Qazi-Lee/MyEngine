@@ -9,6 +9,16 @@
 #include <glm/gtx/matrix_decompose.hpp>
 
 using namespace ENGINE;
+
+static ImVec2 WorldToScreen(const glm::vec3& worldPos, const glm::mat4& view, const glm::mat4& proj) {
+    glm::vec4 clipPos = proj * view * glm::vec4(worldPos, 1.0f);
+    clipPos /= clipPos.w; // 透视除法
+    return ImVec2(
+        (clipPos.x + 1.0f) * 0.5f * ImGui::GetIO().DisplaySize.x,
+        (1.0f - clipPos.y) * 0.5f * ImGui::GetIO().DisplaySize.y
+    );
+}
+
 Layer2D::Layer2D()
 	:Layer("2D"), m_CameraController(1280 / 720)
 {
@@ -379,6 +389,8 @@ void Layer2D::OnImGuiRender()
             tc.Scale = scale;
         }
     }
+
+    //TODO:网格(先完成2D和3D切换)
 
     ImGui::End();
 

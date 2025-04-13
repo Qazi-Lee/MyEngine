@@ -3,8 +3,21 @@
 #include"Engine/Render/Render.h"
 #include"Engine/Render/VertexArray.h"
 #include"Engine/Render/Shader.h"
+
+
 namespace ENGINE
 {
+
+	struct Character
+	{
+		Ref<Texture2D> texture;
+		glm::ivec2 size;
+		glm::ivec2 bearing;
+		uint32_t advance;
+	};
+
+	static std::vector<std::vector<Ref<Texture2D>>> RenderTextLists;
+
 	struct QuadVertex
 	{
 		glm::vec3 position;
@@ -37,12 +50,24 @@ namespace ENGINE
 
 		int EntityID;
 	};
+
+	struct TextVertex
+	{
+		glm::vec4 position;
+		glm::vec2 texturecoord;
+		glm::vec4 color;
+	};
+
 	struct RenderData
 	{
 		static const uint32_t MAXSIZE = 1000;
 		static const uint32_t MAXVERTEX = MAXSIZE * 4;
 		static const uint32_t MAXINDEX = MAXSIZE * 6;
 		static const uint32_t MAXTEXTURE = 32;
+
+		Ref<VertexArray>TextVertexArray;
+		Ref<VertexBuffer>TextVertexBuffer;
+		Ref<Shader>TextShader;
 
 		Ref<VertexArray>QuadVertexArray;
 		Ref<VertexBuffer>QuadVertexBuffer;
@@ -69,6 +94,10 @@ namespace ENGINE
 		LineVertex* LineVertexDataBase = nullptr;
 		LineVertex* LineVertexDataPtr = nullptr;
 
+		int TextIndexCount = 0;
+		TextVertex* TextVertexDataBase = nullptr;
+		TextVertex* TextVertexDataPtr = nullptr;
+		
 		std::array<Ref<Texture2D>, MAXTEXTURE>m_TextureSlots;
 		int TextureCount = 0;
 
@@ -84,7 +113,8 @@ namespace ENGINE
 		//初始化矩形顶点和着色器
 		m_Data.QuadVertexArray = VertexArray::Creat();
 		m_Data.CircleVertexArray = VertexArray::Creat();
-		m_Data.LineVertexArray = VertexArray::Creat();;
+		m_Data.LineVertexArray = VertexArray::Creat();
+		m_Data.TextVertexArray = VertexArray::Creat();
 		//纹理
 		std::string filepath = "assets/Shader/Render2D_Quad.glsl";
 		m_Data.QuadShader = Shader::Create(filepath);
@@ -92,6 +122,8 @@ namespace ENGINE
 		m_Data.CircleShader = Shader::Create(filepath);
 		filepath = "assets/Shader/Render2D_Line.glsl";
 		m_Data.LineShader = Shader::Create(filepath);
+		filepath = "assets/Shader/Text.glsl";
+		m_Data.TextShader = Shader::Create(filepath);
 		//白纹理
 		m_Data.WhiteTexture = Texture2D::Create(1, 1);
 		uint32_t whitedata = 0xffffffff;
@@ -148,8 +180,8 @@ namespace ENGINE
 			{ LayoutElementType::Float3, "a_WorldPosition" },
 			{ LayoutElementType::Float3, "a_LocalPosition" },
 			{ LayoutElementType::Float4, "a_Color"         },
-			{LayoutElementType::Float2,  "a_Texture"       },
-			{LayoutElementType::Float,   "a_TextureIndex"   },
+			{ LayoutElementType::Float2,  "a_Texture"       },
+			{ LayoutElementType::Float,   "a_TextureIndex"   },
 			{ LayoutElementType::Float,  "a_Thickness"     },
 			{ LayoutElementType::Float,  "a_Fade"          },
 			{ LayoutElementType::Int,    "a_EntityID"      }
@@ -168,6 +200,19 @@ namespace ENGINE
 		m_Data.LineVertexArray->AddVertexBuffer(m_Data.LineVertexBuffer);
 		m_Data.LineVertexDataBase = new LineVertex[m_Data.MAXVERTEX];
 
+		//文字
+		m_Data.TextVertexBuffer = VertexBuffer::Creat(m_Data.MAXVERTEX * sizeof(TextVertex));
+		m_Data.TextVertexBuffer->SetLayout(
+		{
+			{LayoutElementType::Float4,"a_Position"},
+			{LayoutElementType::Float2,"a_Texture"},
+			{LayoutElementType::Float4,"a_Color"}
+		}
+		);
+		m_Data.TextVertexArray->AddVertexBuffer(m_Data.TextVertexBuffer);
+		m_Data.TextVertexArray->AddIndexBuffer(quadIB);
+		m_Data.TextVertexDataBase = new TextVertex[m_Data.MAXVERTEX];
+
 		int32_t sample[RenderData::MAXTEXTURE];
 		for (int i = 0; i < RenderData::MAXTEXTURE; i++)
 		{
@@ -177,18 +222,28 @@ namespace ENGINE
 		m_Data.QuadShader->SetIntArray("u_Texture", sample, RenderData::MAXTEXTURE);
 		m_Data.CircleShader->Bind();
 		m_Data.CircleShader->SetIntArray("u_Texture", sample, RenderData::MAXTEXTURE);
+		m_Data.TextShader->Bind();
+		m_Data.TextShader->SetIntArray("u_Texture", sample, RenderData::MAXTEXTURE);
 	}
 
 	void Render2D::Shutdown()
 	{
 		delete[]m_Data.QuadVertexDataBase;
 		delete[]m_Data.CircleVertexDataBase;
+		delete[]m_Data.LineVertexDataBase;
+		delete[]m_Data.TextVertexDataBase;
 	}
 
 	void Render2D::BeginScene(const GraphicsCamera2D& camera)
 	{
 		m_Data.QuadShader->Bind();
 		m_Data.QuadShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		m_Data.CircleShader->Bind();
+		m_Data.CircleShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		m_Data.LineShader->Bind();
+		m_Data.LineShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
+		m_Data.TextShader->Bind();
+		m_Data.TextShader->SetMat4("u_ViewProjection", camera.GetViewProjectionMatrix());
 		StartBatch();
 	}
 
@@ -201,6 +256,8 @@ namespace ENGINE
 		m_Data.CircleShader->SetMat4("u_ViewProjection", project);
 		m_Data.LineShader->Bind();
 		m_Data.LineShader->SetMat4("u_ViewProjection", project);
+		m_Data.TextShader->Bind();
+		m_Data.TextShader->SetMat4("u_ViewProjection", project);
 		StartBatch();
 	}
 
@@ -213,6 +270,8 @@ namespace ENGINE
 		m_Data.CircleShader->SetMat4("u_ViewProjection", project);
 		m_Data.LineShader->Bind();
 		m_Data.LineShader->SetMat4("u_ViewProjection", project);
+		m_Data.TextShader->Bind();
+		m_Data.TextShader->SetMat4("u_ViewProjection", project);
 		StartBatch();
 	}
 
@@ -223,6 +282,7 @@ namespace ENGINE
 
 	void Render2D::Flush()
 	{
+
 		//纹理绑定对应槽
 		for (int i = 0; i < m_Data.TextureCount; i++)
 		{
@@ -256,8 +316,105 @@ namespace ENGINE
 			m_Data.m_stats.DrawCalls++;
 
 		}
+	//	文字
+		if (m_Data.TextIndexCount)
+		{
+			m_Data.TextVertexDataPtr = m_Data.TextVertexDataBase;
+			TextVertex* curr = m_Data.TextVertexDataPtr;
+			m_Data.TextShader->Bind();
+			for (int i = 0; i < RenderTextLists.size(); i++)
+			{
+				for (int j = 0; j < RenderTextLists[i].size(); j++)
+				{
+					for (int count = 0; count < 4; count++)
+					{
+						curr++;
+					}
+					uint32_t datasize = (uint32_t)((uint8_t*)curr - (uint8_t*)m_Data.TextVertexDataPtr);
+					m_Data.TextVertexBuffer->SetData((void*)m_Data.TextVertexDataPtr, datasize);
+					m_Data.TextVertexDataPtr = curr;
+					RenderTextLists[i][j]->Bind(31);
+					RenderCommand::DrawElement(m_Data.TextVertexArray, 6);
+				}
+			}
+
+			m_Data.m_stats.DrawCalls++;
+		}
 	}
 
+	void Render2D::DrawText_(const glm::mat4& transform)
+	{
+		std::vector<Ref<Texture2D>>Textures;
+		//由face得到对应的
+		std::string Text="hellow";
+		FT_Library ft;
+		if (FT_Init_FreeType(&ft)) {
+			std::cerr << "FreeType 初始化失败" << std::endl;
+			return ;
+		}
+		FT_Face g_Face;
+		if (FT_New_Face(ft, "assets/Fonts/Bungee-Regular.ttf", 0, &g_Face)) {
+			std::cerr << "加载字体失败，请检查路径" << std::endl;
+			return ;
+		}
+		if (FT_Error error = FT_Set_Pixel_Sizes(g_Face, 0, 24))
+		{
+			std::cout << g_Face->num_fixed_sizes << std::endl;
+		}
+		float x = -10, y = 0, scale = 0.1f;
+		constexpr glm::vec2 TextureCoord[4] = {
+				{ 0.0f,0.0f },
+				{ 1.0f,0.0f },
+				{ 1.0f,1.0f },
+				{ 0.0f,1.0f }
+		};
+		glm::vec4 Position[4];
+		glm::vec4 color(0.8f);
+		for (char ch : Text)
+		{
+			FT_ULong charcode = static_cast<FT_ULong>(ch);
+			FT_UInt glyph_index = FT_Get_Char_Index(g_Face, charcode);
+			if (glyph_index == 0) {
+				std::wcerr << L"字体中不包含字符: " << wchar_t(charcode) << std::endl;
+			}		
+			if (!FT_Load_Char(g_Face, charcode, FT_LOAD_RENDER | FT_LOAD_TARGET_LIGHT))
+			{
+			}
+			Ref<Texture2D> texture;
+			uint32_t bw = g_Face->glyph->bitmap.width;
+			uint32_t br = g_Face->glyph->bitmap.rows;
+			void* data = g_Face->glyph->bitmap.buffer;
+			texture = Texture2D::Create(bw, br,data);
+
+			Character character;
+			character.size = { g_Face->glyph->bitmap.width,g_Face->glyph->bitmap.rows };
+			character.bearing = { g_Face->glyph->bitmap_left ,g_Face->glyph->bitmap_top };
+			character.advance = static_cast<uint32_t>(g_Face->glyph->advance.x);
+
+			float xpos = x + character.bearing.x* scale;
+			float ypos = y - (character.size.y - character.bearing.y) *scale;
+			float w = character.size.x * scale;
+			float h = character.size.y * scale;
+
+			Position[0] = { xpos, ypos + h,0.0f,1.0f };
+			Position[1] = { xpos + w, ypos + h,0.0f,1.0f };
+			Position[2] = { xpos + w,ypos,0.0f,1.0f };
+			Position[3] = { xpos,ypos,0.0f,1.0f };
+			 for (int i = 0; i < 4; i++)
+			 {
+				 m_Data.TextVertexDataPtr->position =transform*Position[i];
+				 m_Data.TextVertexDataPtr->texturecoord = TextureCoord[i];
+				 m_Data.TextVertexDataPtr->color = color;
+				 m_Data.TextVertexDataPtr++;
+			 }
+ 			 x += (character.advance >> 6)*scale;
+			 Textures.push_back(texture);
+			 m_Data.TextIndexCount++;
+		}
+		RenderTextLists.push_back(Textures);
+		FT_Done_Face(g_Face);
+		FT_Done_FreeType(ft);
+	}
 
 	void Render2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, const float& rotation)
 	{
@@ -580,6 +737,10 @@ namespace ENGINE
 		m_Data.LineVertexDataPtr = m_Data.LineVertexDataBase;
 		m_Data.LineIndexCount = 0;
 
+		m_Data.TextVertexDataPtr = m_Data.TextVertexDataBase;
+		m_Data.TextIndexCount = 0;
+
+		RenderTextLists.clear();
 		m_Data.TextureCount   = 1;
 	}
 

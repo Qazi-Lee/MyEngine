@@ -18,6 +18,7 @@ namespace ENGINE
 	public:
 		virtual ~Texture2D() = default;
 		static Ref<Texture2D> Create(int width, int height);
+		static Ref<Texture2D> Create(uint32_t width, uint32_t height,void* data);
 		static Ref<Texture2D> Create(const std::string&path);
 		virtual std::string GetPath()const=0;
 		virtual uint32_t GetID()const = 0;

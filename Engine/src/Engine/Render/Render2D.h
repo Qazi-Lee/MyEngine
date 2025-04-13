@@ -5,6 +5,10 @@
 #include"Engine/Render/Camera.h"
 #include "Engine/Render/EditorCamera.h"
 //#include"Engine/Scene/SceneCamera.h"
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 namespace ENGINE
 {
 	class Render2D 
@@ -18,6 +22,8 @@ namespace ENGINE
 		static void BeginScene(const EditorCamera& camera);
 		static void EndScene();
 		static void Flush();
+
+		static void DrawText_(const glm::mat4& transform);
 
 		static void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color,const float&rotation=0.0f);
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color,const float&rotation=0.0f);

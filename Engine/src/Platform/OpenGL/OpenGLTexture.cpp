@@ -63,6 +63,7 @@ namespace ENGINE
 	{
 		Internalformat = GL_RGBA8; Dataformat = GL_RGBA;
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
+		glBindTexture(GL_TEXTURE_2D, m_ID);
 		glTextureStorage2D(m_ID, 1, Internalformat, m_Width, m_Height);
 
 		//缩放过滤
@@ -71,6 +72,34 @@ namespace ENGINE
 		//环绕过滤
 		glTextureParameteri(m_ID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_ID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(uint32_t width, uint32_t height, void* data)
+		:m_Width(width), m_Height(height), m_Slot(0)
+	{
+		Internalformat = GL_RED; Dataformat = GL_RED;
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_ID);
+		glBindTexture(GL_TEXTURE_2D, m_ID);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RED,  // 单通道纹理（只保存灰度值）
+			width,
+			height,
+			0,
+			GL_RED,
+			GL_UNSIGNED_BYTE,
+			data
+		);
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
@@ -80,7 +109,9 @@ namespace ENGINE
 
 	void OpenGLTexture2D::SetData(void* data, uint32_t size) const
 	{
+		glBindTexture(GL_TEXTURE_2D, m_ID);
 		glTextureSubImage2D(m_ID, 0, 0, 0, m_Width, m_Height, Dataformat, GL_UNSIGNED_BYTE, data);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	void OpenGLTexture2D::Bind(uint32_t slot) 

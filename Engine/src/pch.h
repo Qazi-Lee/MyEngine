@@ -14,6 +14,9 @@
 #include<unordered_set>
 #include<array>
 
+#include<locale>
+#include<codecvt>
+
 #include<Engine/Log.h>
 #ifdef  ENGINE_PLATFORM_WINDOWS
 #include<Windows.h>
