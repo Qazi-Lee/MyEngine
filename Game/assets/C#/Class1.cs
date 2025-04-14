@@ -45,8 +45,8 @@ public class Derived : MonoBehavior
 
         if (Input.IsKeyDown(KeyCode.Tab))
         {
-             Console.WriteLine("TAB");
-            Console.WriteLine($"index:{sceneManager.index},size:{sceneManager.size}");
+           // Console.WriteLine("TAB");
+           // Console.WriteLine($"index:{sceneManager.index},size:{sceneManager.size}");
             if (sceneManager.index < sceneManager.size - 1)
             {
                 uint index = sceneManager.index;

@@ -51,7 +51,6 @@ void Layer2D::OnUpdate(Time t)
     framebuffer->Bind();
     RenderCommand::SetClearColor({ 0.0f,0.0f,0.0f,1.0f });
     RenderCommand::Clear();
-   // m_ActiveScene = m_SceneManager->GetScene();
     switch (m_SceneState)
     {
         case SceneState::Edit:

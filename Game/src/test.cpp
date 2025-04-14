@@ -6,15 +6,24 @@
 #include<glm/gtc/type_ptr.hpp>
 #include"head/Layer2D.h"
 #include"head/RunGame.h"
+//#define ENGINE_EDITOR
 class Game :public ENGINE:: Application
 {
 public:
 
-	Game() {
+	Game() 
+	{
+#ifdef ENGINE_EDITOR
 		Layer2D* layer2D = new Layer2D();
 		PushLayer(layer2D);
-		//RunGame* game = new RunGame();
-		//PushLayer(game);
+
+#else
+		RunGame* game = new RunGame();
+		PushLayer(game);
+#endif // ENGINE_EDITOR
+
+
+
 	};
 	~Game() {};
 };

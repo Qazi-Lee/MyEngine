@@ -1,0 +1,78 @@
+Scene: 3861974021
+Entities:
+  - Entity:
+      TagComponent:
+        Tag: ball
+      TransformComponent:
+        Translate: [-1.7089324, 3.67946243, 0]
+        Rotation: [0, -0, 0]
+        Scale: [1, 1, 1]
+      RenderCircleComponent:
+        Color: [1, 1, 1, 1]
+        Texture: assets\Texture\1.jpg
+        Thickness: 1
+        Fade: 0.00499999989
+      Rigidbody2DComponent:
+        Type: 1
+        FixedRotation: false
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 1
+        Origin: [0, 0]
+  - Entity:
+      TagComponent:
+        Tag: quad
+      TransformComponent:
+        Translate: [3.93905592, -1.1479404, 0]
+        Rotation: [0, -0, -0.213999838]
+        Scale: [1.02719998, 1.02719998, 1.02719998]
+      RenderQuadComponent:
+        Color: [1, 1, 1, 1]
+        Texture: assets\Texture\1.jpg
+      Rigidbody2DComponent:
+        Type: 2
+        FixedRotation: false
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.75
+        Restitution: 0
+        RestitutionThreshold: 1
+        Origin: [0, 0]
+      CScriptComponent:
+        ClassName: Class1.cs
+        Path: assets\C#\Class1.cs
+  - Entity:
+      TagComponent:
+        Tag: wall
+      TransformComponent:
+        Translate: [-0.10204795, -1.28186607, 0]
+        Rotation: [0, -0, -0.213739812]
+        Scale: [15.2878695, 0.99999994, 1]
+      RenderQuadComponent:
+        Color: [0.400762081, 0.813725471, 0.111687802, 1]
+        Texture: ""
+      Rigidbody2DComponent:
+        Type: 0
+        FixedRotation: false
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 1
+        Origin: [0, 0]
+  - Entity:
+      TagComponent:
+        Tag: Camera
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      CameraComponent:
+        Camera:
+          OrthographicSize: 10
+          AspectRatio: 2.02512574
+          OrthographicNearAndFar: [-1, 1]
+        Primary: true
+        FixedAspectRatio: false

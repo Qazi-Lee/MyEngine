@@ -2,7 +2,7 @@
 
 using namespace ENGINE;
 
-static const std::filesystem::path  m_ScenePath = "assets/Scene";
+static const std::filesystem::path  m_ScenePath = "assets/Scene/Test";
 RunGame::RunGame()
 {
 	m_SceneManager = std::make_shared<SceneManager>();
@@ -16,12 +16,13 @@ RunGame::RunGame()
 
 void RunGame::OnAttach()
 {
+	BeginGame();
 	m_ActiveScene = m_SceneManager->GetScene();
 }
 
 void RunGame::OnDetach()
 {
-	
+	EndGame();
 }
 
 void RunGame::OnUpdate(ENGINE::Time t)
@@ -40,4 +41,20 @@ void RunGame::OnEvent(ENGINE::Event& e)
 void RunGame::OnImGuiRender()
 {
 
+}
+
+void RunGame::BeginGame()
+{
+	for (auto it = m_SceneManager->SceneMap.begin(); it != m_SceneManager->SceneMap.end(); it++)
+	{
+		it->first->OnRuntimeStart();
+	}
+}
+
+void RunGame::EndGame()
+{
+	for (auto it = m_SceneManager->SceneMap.begin(); it != m_SceneManager->SceneMap.end(); it++)
+	{
+		it->first->OnRuntimeEnd();
+	}
 }

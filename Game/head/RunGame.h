@@ -10,6 +10,8 @@ public:
 	void OnUpdate(ENGINE::Time t)override;
 	void OnEvent(ENGINE::Event& e)override;
 	void OnImGuiRender()override;
+	void BeginGame();
+	void EndGame();
 private:
 	ENGINE::Ref<ENGINE::Scene>m_ActiveScene;
 	ENGINE::Ref<ENGINE::SceneManager> m_SceneManager;
