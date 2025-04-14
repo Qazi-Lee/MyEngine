@@ -13,7 +13,7 @@ namespace ENGINE {
 	Application::Application()
 	{
 		//初始化mono
-		mono_set_dirs("C:\\Program Files\\Mono\\lib", "C:\\Program Files\\Mono\\etc");
+		mono_set_dirs("C:/Program Files/Mono/lib", "C:/Program Files/Mono/etc");
 		m_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::Creat());
 		m_Window->SetEventCallbackFn(BIND_EVENT_FN(Application::OnEvent));

@@ -6,7 +6,7 @@
 #include<glm/gtc/type_ptr.hpp>
 #include"head/Layer2D.h"
 #include"head/RunGame.h"
-//#define ENGINE_EDITOR
+#define ENGINE_EDITOR
 class Game :public ENGINE:: Application
 {
 public:

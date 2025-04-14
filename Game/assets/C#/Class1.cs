@@ -22,27 +22,41 @@ public class Derived : MonoBehavior
         float speed = 0.1f;
         if (Input.IsKeyDown(KeyCode.A))
         {
-           // Console.WriteLine("A");
-           translation.x -= speed;
+            // Console.WriteLine("A");
+            translation.x -= speed;
 
         }
         if (Input.IsKeyDown(KeyCode.D))
         {
-           // Console.WriteLine("D");
+            // Console.WriteLine("D");
             translation.x += speed;
         }
         if (Input.IsKeyDown(KeyCode.W))
         {
-           // Console.WriteLine("W");
+            // Console.WriteLine("W");
             translation.y += speed;
         }
         if (Input.IsKeyDown(KeyCode.S))
         {
-           // Console.WriteLine("S");
+            // Console.WriteLine("S");
             translation.y -= speed;
         }
         transform.Translation = translation;
 
+        Vector2 v = Vector2.Zero;
+
+        if (Input.IsKeyDown(KeyCode.Left))
+        {
+            v.x -= 100 * t;
+        }
+        if (Input.IsKeyDown(KeyCode.Right))
+        {
+            v.x = 100 * t;
+        }
+        if (GetComponent<Rigidbody2DComponent>() != null)
+        {
+            GetComponent<Rigidbody2DComponent>().LinearVelocity = v;
+        }
         if (Input.IsKeyDown(KeyCode.Tab))
         {
            // Console.WriteLine("TAB");
@@ -53,6 +67,7 @@ public class Derived : MonoBehavior
                 sceneManager.SetIndex(index + 1);
             }
         }
+
     }
 }
 

@@ -6,7 +6,7 @@
 #include"Engine/Scene/Entity.h"
 #include"Engine/Scene/Component.h"
 
-
+#include"box2d/box2d.h"
 
 #include <mono/metadata/mono-config.h>
 #include<mono/metadata/reflection.h>
@@ -90,7 +90,84 @@ namespace ENGINE
 			auto& transform = e.GetComponent<TransformComponent>();
 			transform.Translate= *translation;
 		}
+		static void Rigidbody2DComponent_ApplyLinearImpulse(int id, glm::vec2* impulse, glm::vec2* point, bool wake)
+		{
+			Entity e = { (entt::entity)id,s_scene };
+			auto& rb2d = e.GetComponent<Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			body->ApplyLinearImpulse(b2Vec2(impulse->x, impulse->y), b2Vec2(point->x, point->y), wake);
+		}
 
+		static void Rigidbody2DComponent_ApplyLinearImpulseToCenter(int id, glm::vec2* impulse, bool wake)
+		{
+			Entity e = { (entt::entity)id,s_scene };
+			auto& rb2d = e.GetComponent<Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			body->ApplyLinearImpulseToCenter(b2Vec2(impulse->x, impulse->y), wake);
+		}
+
+		static void Rigidbody2DComponent_GetLinearVelocity(int id, glm::vec2* outLinearVelocity)
+		{
+			Entity e = { (entt::entity)id,s_scene };
+			auto& rb2d = e.GetComponent<Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			const b2Vec2& linearVelocity = body->GetLinearVelocity();
+			*outLinearVelocity = glm::vec2(linearVelocity.x, linearVelocity.y);
+		}
+
+		static void Rigidbody2DComponent_SetLinearVelocity(int id, glm::vec2* outLinearVelocity)
+		{
+			Entity e = { (entt::entity)id,s_scene };
+			auto& rb2d = e.GetComponent<Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			body->SetLinearVelocity(b2Vec2(outLinearVelocity->x, outLinearVelocity->y));
+		}
+
+		static Rigidbody2DComponent::BodyType Rigidbody2DComponent_GetType(int id)
+		{
+			Entity e = { (entt::entity)id,s_scene };
+			auto& rb2d = e.GetComponent<Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			switch (body->GetType())
+			{
+				case b2_staticBody:
+				{
+					return Rigidbody2DComponent::BodyType::Static;
+				}
+				case b2_dynamicBody:
+				{
+					return Rigidbody2DComponent::BodyType::Dynamic;
+				}
+				case b2_kinematicBody:
+				{
+					return Rigidbody2DComponent::BodyType::Kinematic;
+				}
+			}
+		}
+
+		static void Rigidbody2DComponent_SetType(int id, Rigidbody2DComponent::BodyType bodyType)
+		{
+			Entity e = { (entt::entity)id,s_scene };
+			auto& rb2d = e.GetComponent<Rigidbody2DComponent>();
+			b2Body* body = (b2Body*)rb2d.RuntimeBody;
+			b2BodyType type;
+			switch (bodyType)
+			{
+				case  Rigidbody2DComponent::BodyType::Static:
+				{
+					type = b2_staticBody; break;
+				}
+				case  Rigidbody2DComponent::BodyType::Dynamic:
+				{
+					type = b2_dynamicBody; break;
+				}
+				case  Rigidbody2DComponent::BodyType::Kinematic:
+				{
+					type = b2_kinematicBody; break;
+				}
+			}
+			body->SetType(type);
+		}
 	}
 	ScriptEngine::ScriptEngine(Scene*scene)
 	{
@@ -116,6 +193,14 @@ namespace ENGINE
 
 		mono_add_internal_call("ScriptEngine.InternalCalls::TagComponent_GetTag", TagComponent_GetTag);
 		mono_add_internal_call("ScriptEngine.InternalCalls::TagComponent_SetTag", TagComponent_SetTag);
+
+		mono_add_internal_call("ScriptEngine.InternalCalls::Rigidbody2DComponent_ApplyLinearImpulse", Rigidbody2DComponent_ApplyLinearImpulse);
+		mono_add_internal_call("ScriptEngine.InternalCalls::Rigidbody2DComponent_ApplyLinearImpulseToCenter", Rigidbody2DComponent_ApplyLinearImpulseToCenter);
+		mono_add_internal_call("ScriptEngine.InternalCalls::Rigidbody2DComponent_GetLinearVelocity", Rigidbody2DComponent_GetLinearVelocity);
+		mono_add_internal_call("ScriptEngine.InternalCalls::Rigidbody2DComponent_SetLinearVelocity", Rigidbody2DComponent_SetLinearVelocity);
+		mono_add_internal_call("ScriptEngine.InternalCalls::Rigidbody2DComponent_GetType", Rigidbody2DComponent_GetType);
+		mono_add_internal_call("ScriptEngine.InternalCalls::Rigidbody2DComponent_SetType", Rigidbody2DComponent_SetType);
+
 	}
 	template<typename Component>
 	static void RegisterComponent(MonoImage*image)
@@ -138,12 +223,12 @@ namespace ENGINE
 	{
 		RegisterComponent<TagComponent>(image);
 		RegisterComponent<TransformComponent>(image);
+		RegisterComponent<Rigidbody2DComponent>(image);
 		//TODO:注册其他组件
 		//RegisterComponent<RenderQuadComponent>(image);
 		//RegisterComponent<RenderCircleComponent>(image);
 		//RegisterComponent<CameraComponent>(image);
-		//RegisterComponent<CScriptComponent>(image);
-		//RegisterComponent<Rigidbody2DComponent>(image);
+		//RegisterComponent<CScriptComponent>(image);	
 		//RegisterComponent<AudioComponent>(image);
 
 	}

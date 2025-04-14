@@ -2,19 +2,6 @@ Scene: 3861974021
 Entities:
   - Entity:
       TagComponent:
-        Tag: Quad
-      TransformComponent:
-        Translate: [0, 0, 0]
-        Rotation: [0, 0, 0]
-        Scale: [1, 1, 1]
-      RenderQuadComponent:
-        Color: [1, 1, 1, 1]
-        Texture: assets\Texture\1.jpg
-      CScriptComponent:
-        ClassName: Class1.cs
-        Path: assets\C#\Class1.cs
-  - Entity:
-      TagComponent:
         Tag: Camera
       TransformComponent:
         Translate: [0, 0, 0]
@@ -23,7 +10,29 @@ Entities:
       CameraComponent:
         Camera:
           OrthographicSize: 10
-          AspectRatio: 2.24371862
+          AspectRatio: 1.81862748
           OrthographicNearAndFar: [-1, 1]
         Primary: true
         FixedAspectRatio: false
+  - Entity:
+      TagComponent:
+        Tag: Quad
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      RenderQuadComponent:
+        Color: [1, 1, 1, 1]
+        Texture: assets\Texture\1.jpg
+      Rigidbody2DComponent:
+        Type: 1
+        FixedRotation: false
+        Size: [0.5, 0.5]
+        Density: 1
+        Friction: 0.5
+        Restitution: 0
+        RestitutionThreshold: 1
+        Origin: [0, 0]
+      CScriptComponent:
+        ClassName: Class1.cs
+        Path: assets\C#\Class1.cs
