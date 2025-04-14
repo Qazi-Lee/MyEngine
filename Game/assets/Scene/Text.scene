@@ -2,7 +2,43 @@ Scene: 3861974021
 Entities:
   - Entity:
       TagComponent:
-        Tag: Empty Entity
+        Tag: camera
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      CameraComponent:
+        Camera:
+          OrthographicSize: 10
+          AspectRatio: 1.81862748
+          OrthographicNearAndFar: [-1, 1]
+        Primary: true
+        FixedAspectRatio: false
+  - Entity:
+      TagComponent:
+        Tag: c#
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      CScriptComponent:
+        ClassName: Class1.cs
+        Path: assets\C#\Class1.cs
+  - Entity:
+      TagComponent:
+        Tag: button
+      TransformComponent:
+        Translate: [-0.5, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      ButtonComponent:
+        Path: ""
+        Text: button
+        BackColor: [0.990196049, 0, 0, 1]
+        TextColor: [1, 1, 1, 1]
+  - Entity:
+      TagComponent:
+        Tag: lable
       TransformComponent:
         Translate: [-2.0999999, 0, 0]
         Rotation: [0, 0, 0]
@@ -11,15 +47,3 @@ Entities:
         Path: ""
         Text: lable
         TextColor: [1, 0.882352948, 0.882352948, 1]
-  - Entity:
-      TagComponent:
-        Tag: Empty Entity
-      TransformComponent:
-        Translate: [0, 0, 0]
-        Rotation: [0, 0, 0]
-        Scale: [1, 1, 1]
-      ButtonComponent:
-        Path: ""
-        Text: button
-        BackColor: [0.990196049, 0, 0, 1]
-        TextColor: [1, 1, 1, 1]

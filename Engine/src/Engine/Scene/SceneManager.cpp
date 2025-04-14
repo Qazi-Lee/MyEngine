@@ -5,6 +5,11 @@
 namespace ENGINE
 {
 
+	SceneManager::SceneManager(const Ref<Scene>& scene)
+	{
+		Scenes.push_back(scene);
+		SceneMap[scene] = "EditorScene";
+	}
 	 Ref<Scene>& SceneManager::GetScene()
 	{
 		return Scenes[index];
@@ -68,7 +73,7 @@ namespace ENGINE
 
 	void SceneManager::SetScene(int id)
 	{
-		index = id;
+ 		index = id;
 	}
 
 	void SceneManager::RenameScene(std::string name)

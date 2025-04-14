@@ -6,17 +6,44 @@
 #include"Engine/Scene/Entity.h"
 #include"Engine/Scene/Component.h"
 
+
+
 #include <mono/metadata/mono-config.h>
 #include<mono/metadata/reflection.h>
+
 
 namespace ENGINE
 {
 	static std::unordered_map<MonoType*, std::function<bool(Entity)>> EntityHasComponentFunc;
 
-	static Scene* s_scene = nullptr;
+	static Ref<SceneManager> sceneManager;
 
+	static Scene* s_scene = nullptr;
 	extern "C"
 	{
+		static void SceneManager_GetIndex(uint32_t * index)
+		{
+			if (sceneManager.get())
+			{
+				uint32_t i = sceneManager->GetIndex();
+				*index = sceneManager->GetIndex();
+			}
+		}
+		static void SceneManager_GetSize(uint32_t* size)
+		{
+			if (sceneManager.get())
+			{
+				uint32_t s = sceneManager->size();
+				*size = (uint32_t)sceneManager->size();
+			}
+		}
+		static void SceneManager_SetIndex(uint32_t* index)
+		{
+			if (sceneManager.get())
+			{
+				sceneManager->SetScene(*index);
+			}
+		}
 		static bool Input_IsKeyDown(int code)
 		{
 			return Input::IsKeyPress(code);
@@ -63,13 +90,23 @@ namespace ENGINE
 			auto& transform = e.GetComponent<TransformComponent>();
 			transform.Translate= *translation;
 		}
+
 	}
-	ScriptEngine::ScriptEngine(Scene* scene)
+	ScriptEngine::ScriptEngine(Scene*scene)
 	{
 		s_scene = scene;
 	}
+	void ScriptEngine::SetSceneManager(const Ref<SceneManager>& sm)
+	{
+		sceneManager = sm;
+	}
 	void ScriptEngine::Register()
 	{
+
+		mono_add_internal_call("ScriptEngine.InternalCalls::SceneManager_GetIndex", SceneManager_GetIndex);
+		mono_add_internal_call("ScriptEngine.InternalCalls::SceneManager_GetSize", SceneManager_GetSize);
+		mono_add_internal_call("ScriptEngine.InternalCalls::SceneManager_SetIndex", SceneManager_SetIndex);
+
 		mono_add_internal_call("ScriptEngine.InternalCalls::Input_IsKeyDown", Input_IsKeyDown);
 
 		mono_add_internal_call("ScriptEngine.InternalCalls::Entity_HasComponent", Entity_HasComponent);

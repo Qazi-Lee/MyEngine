@@ -42,6 +42,17 @@ public class Derived : MonoBehavior
             translation.y -= speed;
         }
         transform.Translation = translation;
+
+        if (Input.IsKeyDown(KeyCode.Tab))
+        {
+             Console.WriteLine("TAB");
+            Console.WriteLine($"index:{sceneManager.index},size:{sceneManager.size}");
+            if (sceneManager.index < sceneManager.size - 1)
+            {
+                uint index = sceneManager.index;
+                sceneManager.SetIndex(index + 1);
+            }
+        }
     }
 }
 

@@ -2,6 +2,16 @@ Scene: 3861974021
 Entities:
   - Entity:
       TagComponent:
+        Tag: c#
+      TransformComponent:
+        Translate: [0, 0, 0]
+        Rotation: [0, 0, 0]
+        Scale: [1, 1, 1]
+      CScriptComponent:
+        ClassName: Class1.cs
+        Path: assets\C#\Class1.cs
+  - Entity:
+      TagComponent:
         Tag: Music
       TransformComponent:
         Translate: [0, 0, 0]

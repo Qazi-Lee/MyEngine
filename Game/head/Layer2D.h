@@ -1,10 +1,8 @@
 #pragma once
 #include"Engine.h"
-#include"Engine/Render/Texture.h"
 #include"Panels/ScenePanels.h"
 #include"Panels/ContentBrowserPanels.h"
-#include"Engine/Render/EditorCamera.h"
-#include"Engine/Scene/SceneManager.h"
+
 class Layer2D :public ENGINE::Layer
 {
 public:
@@ -33,11 +31,10 @@ private:
 	ENGINE::Ref<ENGINE::SubTexture2D> subtexture;
 	ENGINE::Ref<ENGINE::FrameBuffer>framebuffer;
 	ENGINE::Ref<ENGINE::Scene>m_ActiveScene;
-	//ENGINE::Ref<ENGINE::Scene>m_EditorScene;
 	ENGINE::Ref<ENGINE::ScenePanels>m_ScenePanels;
 	ENGINE::Ref<ENGINE::ContentBrowserPanels>m_ContentBrowserPanels;
+	ENGINE::Ref<ENGINE::SceneManager> m_SceneManager;
 	ENGINE::EditorCamera m_EditorCamera;
-	ENGINE::SceneManager m_SceneManager;
 
 	ENGINE::Entity camera;
 	ENGINE::Entity m_HoveredEntity=ENGINE::Entity();

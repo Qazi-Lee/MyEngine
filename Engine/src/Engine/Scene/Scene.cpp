@@ -177,6 +177,26 @@ namespace ENGINE
 							}
 						}
 					}
+					//按钮
+					{
+						auto view = m_Registry.view<TransformComponent, ButtonComponent>();
+						for (auto entity : view)
+						{
+							auto [transform, bc] = view.get<TransformComponent, ButtonComponent>(entity);
+
+							Render2D::DrawButton(transform.GetTransform(), bc.Path, bc.Text, bc.TextColor, bc.BackColor, (int)entity);
+						}
+					}
+					//标签
+					{
+						auto view = m_Registry.view<TransformComponent, LableComponent>();
+						for (auto entity : view)
+						{
+							auto [transform, bc] = view.get<TransformComponent, LableComponent>(entity);
+
+							Render2D::DrawLable(transform.GetTransform(), bc.Path, bc.Text, bc.TextColor, (int)entity);
+						}
+					}
 					Render2D::EndScene();
 				}
 			}
@@ -308,7 +328,7 @@ namespace ENGINE
 				CopyComponent<LableComponent>(SrcRegistry, target, srcid, tarid);
 			}
 		);
-
+		
 		return res;
 	}
 
@@ -317,7 +337,7 @@ namespace ENGINE
 		//创建body
 		if (!m_Registry.empty())
 		{
-			auto view = m_Registry.view<TransformComponent,Rigidbody2DComponent>();
+			auto view = m_Registry.view<TransformComponent, Rigidbody2DComponent>();
 			if (view)
 			{
 				////输入重力创建世界
@@ -326,8 +346,8 @@ namespace ENGINE
 			}
 			for (auto entity : view)
 			{
-				auto& trans =view.get<TransformComponent>(entity);
-				auto& rgd2d =view.get<Rigidbody2DComponent>(entity);
+				auto& trans = view.get<TransformComponent>(entity);
+				auto& rgd2d = view.get<Rigidbody2DComponent>(entity);
 
 				b2BodyDef bodydef;
 				bodydef.position.Set(trans.Translate.x, trans.Translate.y);
@@ -380,7 +400,6 @@ namespace ENGINE
 
 	void Scene::OnRuntimeEnd()
 	{
-
 		if (m_b2World)
 		{
 			delete m_b2World;
@@ -449,6 +468,68 @@ namespace ENGINE
 	template<>
 	void Scene::OnComponentAdded<RenderCircleComponent>(RenderCircleComponent& component)
 	{
+		//创建body
+		//if (!m_Registry.empty())
+		//{
+		//	auto view = m_Registry.view<TransformComponent, Rigidbody2DComponent>();
+		//	if (view && m_b2World == nullptr)
+		//	{
+		//		////输入重力创建世界
+		//		b2Vec2 gravity(0.0f, -9.8f);
+		//		m_b2World = new b2World(gravity);
+		//	}
+		//	for (auto entity : view)
+		//	{
+		//		auto& trans = view.get<TransformComponent>(entity);
+		//		auto& rgd2d = view.get<Rigidbody2DComponent>(entity);
+
+		//		b2BodyDef bodydef;
+		//		bodydef.position.Set(trans.Translate.x, trans.Translate.y);
+		//		bodydef.angle = trans.Rotation.z;
+		//		bodydef.type = BodyTypeTob2BodyType(rgd2d.Type);
+		//		bodydef.fixedRotation = rgd2d.FixedRotation;
+
+		//		b2Body* body = m_b2World->CreateBody(&bodydef);
+
+		//		rgd2d.RuntimeBody = body;
+
+		//		b2PolygonShape bodyshape;
+		//		if (m_Registry.has<RenderQuadComponent>(entity))
+		//		{
+		//			bodyshape.SetAsBox(trans.Scale.x * rgd2d.size.x, trans.Scale.y * rgd2d.size.y);
+		//		}
+		//		else if (m_Registry.has<RenderCircleComponent>(entity))
+		//		{
+
+		//			//近似模拟圆形，只支持最大8边形
+		//			float a = trans.Scale.x * rgd2d.size.x; // X 半径
+		//			float b = trans.Scale.y * rgd2d.size.y; // Y 半径
+		//			const int numSegments = 36;
+		//			//若需更多顶点，需修改 b2Settings.h 中的 b2_maxPolygonVertices（不推荐破坏兼容性）。已更改为36 影响性能
+		//			// 生成顶点
+		//			b2Vec2 vertices[numSegments];
+		//			vertices->SetZero();
+		//			for (int i = 0; i < numSegments; ++i) {
+		//				float theta = 2.0f * b2_pi * i / numSegments;
+		//				vertices[i].Set(a * cosf(theta), b * sinf(theta));
+		//			}
+		//			bodyshape.Set(vertices, numSegments);
+		//		}
+		//		else
+		//		{
+		//			//暂时设置
+		//			bodyshape.SetAsBox(trans.Scale.x * rgd2d.size.x, trans.Scale.y * rgd2d.size.y);
+		//		}
+		//		b2FixtureDef fixtureDef;
+		//		fixtureDef.shape = &bodyshape;
+		//		fixtureDef.density = rgd2d.Density;
+		//		fixtureDef.friction = rgd2d.Friction;
+		//		fixtureDef.restitution = rgd2d.Restitution;
+		//		fixtureDef.restitutionThreshold = rgd2d.RestitutionThreshold;
+		//		body->CreateFixture(&fixtureDef);
+
+		//	}
+		//}
 	}
 	template<>
 	void Scene::OnComponentAdded<AudioComponent>(AudioComponent& component)
@@ -462,12 +543,21 @@ namespace ENGINE
 	template<>
 	void Scene::OnComponentAdded<LableComponent>(LableComponent& component)
 	{
-
+		
 	}
 	//Remove
 	template<typename T>
 	void Scene::OnComponentRemoved(T& conponent)
 	{
 
+	}
+	template<>
+	void Scene::OnComponentRemoved<Rigidbody2DComponent>(Rigidbody2DComponent& component)
+	{
+		if (m_b2World)
+		{
+			delete m_b2World;
+			m_b2World = nullptr;
+		}
 	}
 }

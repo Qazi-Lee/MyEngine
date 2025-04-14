@@ -15,6 +15,9 @@
 #include"Engine/Scene/Component.h"
 #include"Engine/Scene/SceneCamera.h"
 #include"Engine/Scene/SceneSerialization.h"
+#include"Engine/Render/EditorCamera.h"
+#include"Engine/Scene/SceneManager.h"
+#include"Engine/Scene/ScriptEngine.h"
 /*************Render***************/
 #include"Engine/Render/Render.h"
 #include"Engine/Render/Buffer.h"
@@ -24,6 +27,8 @@
 #include"Engine/Render/GraphicsCamera.h"
 #include"Engine/Render/Texture.h"
 #include"Engine/Render/SubTexture2D.h"
+#include"Engine/Render/Render2D.h"
+
 
 #include"Engine/KeyCode.h"
 #include"Engine/MouseButton.h"

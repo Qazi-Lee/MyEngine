@@ -6,11 +6,15 @@ namespace ENGINE
 	class SceneManager
 	{
 	public:
-		SceneManager() = default;
-		SceneManager(const Ref<Scene>& scene)
+		SceneManager()=default;
+		SceneManager(const Ref<Scene>& scene);
+		~SceneManager()
 		{
-			Scenes.push_back(scene);
-			SceneMap[scene] = "EditorScene";
+			for (Ref<Scene> s : Scenes)
+			{
+				s->OnRuntimeEnd();
+			}
+			Scenes.clear();
 		}
 		Ref<Scene>& GetScene();
 		Ref<Scene>& GetScene(int i);
@@ -20,12 +24,12 @@ namespace ENGINE
 		void DeleteScene(int i);
 		void SetScene(int id);
 		void RenameScene(std::string name);
+		uint32_t GetIndex()const { return index; }
 		size_t size();
 	public:
 		std::unordered_map<Ref<Scene>, std::string>SceneMap;
 	private:
 		std::vector<Ref<Scene>>Scenes;
-		
 		uint32_t index=0;
 	};
 

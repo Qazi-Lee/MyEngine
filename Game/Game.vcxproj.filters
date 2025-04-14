@@ -27,6 +27,9 @@
     <ClCompile Include="src\Panels\ContentBrowserPanels.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\RunGame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\Shader\Render2D_Quad.glsl" />
@@ -43,6 +46,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Panels\ContentBrowserPanels.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="head\RunGame.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

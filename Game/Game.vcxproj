@@ -151,6 +151,7 @@
     <ClCompile Include="src\Layer2D.cpp" />
     <ClCompile Include="src\Panels\ContentBrowserPanels.cpp" />
     <ClCompile Include="src\Panels\ScenePanels.cpp" />
+    <ClCompile Include="src\RunGame.cpp" />
     <ClCompile Include="src\test.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="head\Layer2D.h" />
+    <ClInclude Include="head\RunGame.h" />
     <ClInclude Include="src\Panels\ContentBrowserPanels.h" />
     <ClInclude Include="src\Panels\ScenePanels.h" />
   </ItemGroup>
