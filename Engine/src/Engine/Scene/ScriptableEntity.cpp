@@ -20,7 +20,7 @@ namespace ENGINE
 #else
 		rootpath = "..";
 #endif // MY_FILE_PATH;
-		command = "mcs - lib:" + rootpath + "/Third/lib ";
+		command = "mcs -lib:" + rootpath + "/Third/lib ";
 		command+="-r:ScriptEngine.dll -r:System.Runtime.dll ";
 	//编译成dll
 		command += "-target:library -out:"; command += assemblyName; command += ".dll "; command += assemblyPath;

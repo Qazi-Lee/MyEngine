@@ -52,6 +52,13 @@ add_custom_command(TARGET Game POST_BUILD
 )
 
 add_custom_command(TARGET Game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_SOURCE_DIR}/ScriptEngine/bin/${CONFIG}/net8.0/ScriptEngine.dll"
+    "${CMAKE_BINARY_DIR}/Game"
+    COMMENT "Copying ScriptEngine.dll to output directory"
+)
+
+add_custom_command(TARGET Game POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_SOURCE_DIR}/assets"
         "$<TARGET_FILE_DIR:Game>/assets"
