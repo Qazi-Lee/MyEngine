@@ -13,10 +13,14 @@ namespace ENGINE
 
 	CLRLoader::CLRLoader(const char* assemblyPath, const char* assemblyName)
 	{
-		std::string command;
+		std::string command,rootpath;
 	//TODO:引用已有dll
-	//	command = "mcs -lib:D:\\MyEngine\\MyEngine\\Third\\lib ";
-		command = R"(mcs -lib:..\Third\lib )";
+#ifdef MY_FILE_PATH;
+		rootpath= MY_FILE_PATH
+#else
+		rootpath = "..";
+#endif // MY_FILE_PATH;
+		command = "mcs - lib:" + rootpath + "/Third/lib ";
 		command+="-r:ScriptEngine.dll -r:System.Runtime.dll ";
 	//编译成dll
 		command += "-target:library -out:"; command += assemblyName; command += ".dll "; command += assemblyPath;

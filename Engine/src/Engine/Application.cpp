@@ -14,7 +14,15 @@ namespace ENGINE {
 	{
 		//初始化mono
 	//	mono_set_dirs("C:/Program Files/Mono/lib", "C:/Program Files/Mono/etc");
-		mono_set_dirs("../Mono/lib", "../Mono/etc");
+		std::string rootpath = std::string();
+#ifdef MY_FILE_PATH
+		rootpath=  MY_FILE_PATH;
+#else
+		rootpath = "..";
+#endif // MY_FILE_PATH
+		std::string libpath = rootpath + "/Mono/lib";
+		std::string etcpath = rootpath + "/Mono/etc";
+		mono_set_dirs(libpath.c_str(),etcpath.c_str());
 		m_Instance = this;
 		m_Window = std::unique_ptr<Window>(Window::Creat());
 		m_Window->SetEventCallbackFn(BIND_EVENT_FN(Application::OnEvent));

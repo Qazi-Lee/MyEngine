@@ -33,3 +33,9 @@ ${CMAKE_CURRENT_SOURCE_DIR}/vender
 target_compile_definitions(Engine PUBLIC 
     ENGINE_PLATFORM_WINDOWS
 )
+
+set(MY_FILE_PATH "${CMAKE_SOURCE_DIR}")
+
+target_compile_definitions(Engine PUBLIC 
+    MY_FILE_PATH="${MY_FILE_PATH}"
+)
