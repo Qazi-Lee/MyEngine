@@ -95,3 +95,5 @@ MyEngine 采用 EnTT 库实现了 ECS 架构，并使用场景来管理实体，
 ### 3. 提供unity和ue等商业引擎的项目生成功能，实现编辑模式和发布模式切换以及一键导出项目功能。
 
 
+## 参考
+该引擎模仿Hazel引擎的架构（https://github.com/TheCherno/Hazel）
