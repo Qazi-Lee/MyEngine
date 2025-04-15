@@ -36,6 +36,10 @@ file(GLOB_RECURSE GLFW_SOURCES
 
 add_library(GLFW STATIC ${GLFW_SOURCES})
 
+target_compile_definitions(GLFW PUBLIC 
+    _CRT_SECURE_NO_WARNINGS
+    _GLFW_WIN32
+)
 target_include_directories(GLFW PUBLIC 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
 )

@@ -1,5 +1,5 @@
 #ImGui
-file(GLOB_RECURSE IMGUI_SOURCES
+file(GLOB IMGUI_SOURCES
     "*.h"
     "*.cpp" 
 )

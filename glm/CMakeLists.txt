@@ -914,6 +914,11 @@ file(GLOB_RECURSE GLM_SOURCES
 
 add_library(glm STATIC ${GLM_SOURCES})
 
+
+target_compile_definitions(glm PUBLIC 
+    _LIB
+)
+
 target_include_directories(glm PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )   

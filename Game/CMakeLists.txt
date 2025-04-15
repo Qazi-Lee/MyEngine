@@ -26,17 +26,55 @@ target_include_directories(Game PRIVATE ${VULKANSKD_INCLUDE_DIR})
 target_link_libraries(Game PRIVATE ${VULKANSKD_LIB_DIR}/vulkan-1.lib)
 
 target_include_directories(Game PUBLIC 
+
+${CMAKE_CURRENT_SOURCE_DIR}
 ${CMAKE_CURRENT_SOURCE_DIR}/src 
+
 )
 
 target_compile_definitions(Game PUBLIC 
     ENGINE_PLATFORM_WINDOWS
 )
 
+add_dependencies(Game ScriptEngineBuild)
+
+if(CMAKE_CONFIGURATION_TYPES)
+    set(CONFIG $<CONFIG>)
+else()
+    set(CONFIG ${CMAKE_BUILD_TYPE})
+endif()
+
 add_custom_command(TARGET Game POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-        ${CMAKE_SOURCE_DIR}/ScriptCore/bin/${CMAKE_BUILD_TYPE}/ScriptCore.dll
-        $<TARGET_FILE_DIR:Game>
-    COMMENT "Copying ScriptCore.dll to output directory"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_SOURCE_DIR}/ScriptEngine/bin/${CONFIG}/net8.0/ScriptEngine.dll"
+    "$<TARGET_FILE_DIR:Game>"
+    COMMENT "Copying ScriptEngine.dll to output directory"
 )
 
+add_custom_command(TARGET Game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:Game>/assets"
+    COMMENT "Copying entire assets folder"
+)
+
+add_custom_command(TARGET Game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Icons"
+        "$<TARGET_FILE_DIR:Game>/Icons"
+    COMMENT "Copying entire Icons folder"
+)
+
+add_custom_command(TARGET Game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "${CMAKE_BINARY_DIR}/Game/assets"
+    COMMENT "Copying entire assets folder"
+)
+
+add_custom_command(TARGET Game POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/Icons"
+        "${CMAKE_BINARY_DIR}/Game/Icons"
+    COMMENT "Copying entire Icons folder"
+)

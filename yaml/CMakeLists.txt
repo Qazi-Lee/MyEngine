@@ -1,6 +1,6 @@
 #yaml
 
-file(GLOB_RECURSE YAML_SOURCES
+file(GLOB YAML_SOURCES
 "src/binary.cpp"
 
 
@@ -91,6 +91,8 @@ file(GLOB_RECURSE YAML_SOURCES
 
 
 add_library(yaml STATIC ${YAML_SOURCES})
+
+target_compile_definitions(yaml PUBLIC YAML_CPP_STATIC_DEFINE)
 
 target_include_directories(yaml PUBLIC 
 ${CMAKE_CURRENT_SOURCE_DIR}/include
