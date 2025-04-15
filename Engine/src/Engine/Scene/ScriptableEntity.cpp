@@ -15,7 +15,8 @@ namespace ENGINE
 	{
 		std::string command;
 	//TODO:引用已有dll
-		command = "mcs -lib:D:\\MyEngine\\MyEngine\\Third\\lib ";
+	//	command = "mcs -lib:D:\\MyEngine\\MyEngine\\Third\\lib ";
+		command = R"(mcs -lib:..\Third\lib )";
 		command+="-r:ScriptEngine.dll -r:System.Runtime.dll ";
 	//编译成dll
 		command += "-target:library -out:"; command += assemblyName; command += ".dll "; command += assemblyPath;
