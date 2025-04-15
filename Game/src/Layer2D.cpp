@@ -2,10 +2,12 @@
 #include<glm/gtc/type_ptr.hpp>
 #include"Engine/Render/Render2D.h"
 #include"Engine/Math/math.h"
-#include"imgui.h"
 #include"Engine/Utils/PlatformUtils.h"
-#include"ImGuizmo.h"
 #include"Engine/Scene/ScriptEngine.h"
+
+#include"imgui.h"
+#include"ImGuizmo.h"
+#include"imgui_internal.h"
 using namespace ENGINE;
 
 Layer2D::Layer2D()
@@ -13,6 +15,7 @@ Layer2D::Layer2D()
 {
 
 }
+static bool dock_layout_built = false;
 
 void Layer2D::OnAttach()
 {
@@ -137,11 +140,57 @@ void Layer2D::OnImGuiRender()
 
     // DockSpace
     ImGuiIO& io = ImGui::GetIO();
+    ImGuiID dockspace_id;
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
     {
-        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
+    //初始化布局
+    if (!dock_layout_built)
+    {
+        ImGuiID dock_main_id = dockspace_id;
+
+        // 重置并设置 Dock 空间大小
+        ImGui::DockBuilderRemoveNode(dockspace_id);
+        ImGui::DockBuilderAddNode(dockspace_id, ImGuiDockNodeFlags_None);
+        ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetIO().DisplaySize);
+
+        // Step 1: 切出左侧和右侧
+        ImGuiID dock_id_left, dock_id_right, dock_id_center;
+        ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.15f, &dock_id_left, &dock_id_center);
+        ImGui::DockBuilderSplitNode(dock_id_center, ImGuiDir_Right, 0.15f, &dock_id_right, &dock_id_center); // 继续切右侧，剩中间
+
+        // Step 2: 切左边（上下）
+        ImGuiID dock_id_left_top, dock_id_left_bottom;
+        ImGui::DockBuilderSplitNode(dock_id_left, ImGuiDir_Up, 0.5f, &dock_id_left_top, &dock_id_left_bottom);
+
+        // Step 3: 切右边（上下）
+        ImGuiID dock_id_right_top, dock_id_right_bottom;
+        ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Up, 0.5f, &dock_id_right_top, &dock_id_right_bottom);
+
+        // Step 4: 中间切三份：上、中、下
+        // 首先切出顶部（10%）
+        ImGuiID dock_id_center_top, dock_id_center_rest;
+        ImGui::DockBuilderSplitNode(dock_id_center, ImGuiDir_Up, 0.1f, &dock_id_center_top, &dock_id_center_rest);
+
+        // 然后再从剩下的 90% 中切出中间（占其中 6/9 = 66.6%）
+        ImGuiID dock_id_center_middle, dock_id_center_bottom;
+        ImGui::DockBuilderSplitNode(dock_id_center_rest, ImGuiDir_Up, 0.666f, &dock_id_center_middle, &dock_id_center_bottom);
+
+        // 将窗口 dock 到指定区域
+        ImGui::DockBuilderDockWindow("Scene Entity", dock_id_left_top);
+        ImGui::DockBuilderDockWindow("Component", dock_id_left_bottom);
+        ImGui::DockBuilderDockWindow("##toolbar", dock_id_center_top);
+        ImGui::DockBuilderDockWindow("Viewport", dock_id_center_middle);
+        ImGui::DockBuilderDockWindow("ContextBrowser", dock_id_center_bottom);
+        ImGui::DockBuilderDockWindow("Setting", dock_id_right_top);
+        ImGui::DockBuilderDockWindow("SceneController", dock_id_right_bottom);
+
+        ImGui::DockBuilderFinish(dockspace_id);
+        dock_layout_built = true;
+    }
+
     //场景控制渲染
     m_ScenePanels->OnImGuiRender();
     //资产浏览器渲染
