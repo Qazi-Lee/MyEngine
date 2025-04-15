@@ -39,8 +39,6 @@ out/
 Debug/
 Release/
 *.exe
-*.dll
-*.lib
 *.so
 *.dylib
 *.app
