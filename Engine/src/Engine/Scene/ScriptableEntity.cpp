@@ -16,7 +16,7 @@ namespace ENGINE
 		std::string command,rootpath;
 	//TODO:引用已有dll
 #ifdef MY_FILE_PATH;
-		rootpath= MY_FILE_PATH
+		rootpath = MY_FILE_PATH;
 #else
 		rootpath = "..";
 #endif // MY_FILE_PATH;
